@@ -17,7 +17,7 @@
     select { font-size: 1.2em; padding: 0.3em; margin-bottom: 1em; }
     #question { font-size: 1.8em; margin: 1em 0; font-weight: bold; }
     #description { font-size: 1.2em; margin-bottom: 1em; }
-    #result, #streak, #message { font-size: 1.5em; margin-top: 1em; font-weight: bold; }
+    #result, #streak, #message, #timer { font-size: 1.5em; margin-top: 1em; font-weight: bold; }
     #egg-container, #dino-container { margin-top: 2em; }
     .creature-img { width: 180px; transition: filter 0.3s ease; display: none; margin: 10px auto; }
     .red { filter: hue-rotate(0deg); }
@@ -47,6 +47,7 @@
   <button onclick="checkAnswer()">答え合わせ</button>
   <div id="result"></div>
   <div id="streak">連続正解数: 0</div>
+  <div id="timer"></div>
   <div id="message"></div>
 
   <div id="egg-container">
@@ -61,10 +62,15 @@
     let answerNumer = 0;
     let answerDenom = 1;
     let hatchPath = "";
+    let timerInterval;
+    let elapsedTime = 0;
+    let timeLimit = 40;
+
     const eggImage = document.getElementById("eggImage");
     const dinoImage = document.getElementById("dino");
     const message = document.getElementById("message");
     const description = document.getElementById("description");
+    const timerDisplay = document.getElementById("timer");
 
     function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
     function simplify(n, d) {
@@ -101,6 +107,9 @@
       return simplify(n, d);
     }
     function generateQuestion() {
+      clearInterval(timerInterval);
+      elapsedTime = 0;
+      timerDisplay.textContent = "";
       let ops = ['+', '-', '*', '/'];
       let symbols = {'+': '＋', '-': '－', '*': '×', '/': '÷'};
       let [a1, b1] = generateTerm();
@@ -108,6 +117,8 @@
       let [a3, b3] = generateTerm();
       let op1 = ops[getRandomInt(0, 3)];
       let op2 = ops[getRandomInt(0, 3)];
+      let hasFraction = [b1, b2, b3].some(b => b !== 1);
+      timeLimit = hasFraction ? 40 : 20;
       let [n1, d1] = operate(a1, b1, a2, b2, op1);
       let [n2, d2] = operate(n1, d1, a3, b3, op2);
       if (n2 <= 0 || d2 <= 0 || n2 / d2 > 60) return generateQuestion();
@@ -115,6 +126,7 @@
       const html = `${displayFraction(a1,b1)} ${symbols[op1]} ${displayFraction(a2,b2)} ${symbols[op2]} ${displayFraction(a3,b3)}`;
       document.getElementById('question').innerHTML = `問題: ${html}`;
       document.getElementById('result').textContent = '';
+      startTimer();
     }
     function toggleInput() {
       const type = document.getElementById('answerType').value;
@@ -122,6 +134,7 @@
       document.getElementById('answerInteger').style.display = type === 'integer' ? 'inline-block' : 'none';
     }
     function checkAnswer() {
+      clearInterval(timerInterval);
       const type = document.getElementById('answerType').value;
       let userNumer, userDenom;
       if (type === 'fraction') {
@@ -205,6 +218,17 @@
           message.textContent = "そういえば、本当にタマゴがゲットできることもあるみたいだよ";
         }
       }
+    }
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        elapsedTime++;
+        if (elapsedTime <= timeLimit) {
+          timerDisplay.textContent = `経過時間: ${elapsedTime}秒（目安: ${timeLimit}秒）`;
+        } else {
+          clearInterval(timerInterval);
+          timerDisplay.textContent = `${timeLimit}秒経過！答えよう！`;
+        }
+      }, 1000);
     }
     window.onload = generateQuestion;
   </script>
