@@ -6,16 +6,17 @@
   <title>計算名人君プラス</title>
   <style>
     body { font-family: sans-serif; text-align: center; background: #f5f5fa; padding: 2em; }
-    .fraction { display: inline-block; vertical-align: middle; text-align: center; margin: 0 5px; font-size: 1.8em; line-height: 1.2em; }
+    .fraction, .natural { display: inline-block; vertical-align: middle; text-align: center; margin: 0 5px; font-size: 1.8em; line-height: 1.2em; }
     .fraction .top { border-bottom: 1px solid #000; display: block; padding: 0 5px; }
     .fraction .bottom { display: block; padding: 0 5px; }
     .fraction-input { display: inline-block; vertical-align: middle; margin: 0 5px; text-align: center; }
     .fraction-input input { display: block; width: 60px; font-size: 1.5em; margin: 5px auto; text-align: center; }
-    input[type="number"] { font-size: 1.5em; padding: 0.5em; width: 100px; margin: 0.5em; text-align: center; }
+    input[type="number"] { font-size: 1.5em; padding: 0.5em; width: 100px; margin: 0.5em auto; text-align: center; display: block; }
     button { font-size: 1.5em; padding: 0.6em 1.2em; margin: 1em; background-color: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; }
     button:hover { background-color: #45a049; }
     select { font-size: 1.2em; padding: 0.3em; margin-bottom: 1em; }
     #question { font-size: 1.8em; margin: 1em 0; font-weight: bold; }
+    #description { font-size: 1.2em; margin-bottom: 1em; }
     #result, #streak, #message { font-size: 1.5em; margin-top: 1em; font-weight: bold; }
     #egg-container, #dino-container { margin-top: 2em; }
     .creature-img { width: 180px; transition: filter 0.3s ease; display: none; margin: 10px auto; }
@@ -26,7 +27,7 @@
 </head>
 <body>
   <h1>計算名人君プラス</h1>
-  <p>3項計算・答えは分数または整数で入力しよう！</p>
+  <p id="description">計算用紙を用意して取り組もう！</p>
   <div id="question">問題を読み込み中...</div>
   <div>
     <label for="answerType">答えの形式：</label>
@@ -40,7 +41,7 @@
     <div style="font-size: 1.5em; line-height: 0.5em;">―</div>
     <input type="number" id="denominator" placeholder="分母">
   </div>
-  <div id="answerInteger" style="display:none;">
+  <div id="answerInteger" class="fraction-input" style="display:none;">
     <input type="number" id="integerAnswer" placeholder="整数で入力">
   </div>
   <button onclick="checkAnswer()">答え合わせ</button>
@@ -63,6 +64,7 @@
     const eggImage = document.getElementById("eggImage");
     const dinoImage = document.getElementById("dino");
     const message = document.getElementById("message");
+    const description = document.getElementById("description");
 
     function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
     function simplify(n, d) {
@@ -72,7 +74,7 @@
     function getRandomInt(min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
-      function generateTerm() {
+    function generateTerm() {
       const isFraction = Math.random() < 0.7;
       if (isFraction) {
         let numer = getRandomInt(2, 24);
@@ -85,7 +87,7 @@
       }
     }
     function displayFraction(n, d) {
-      if (d === 1) return `<span>${n}</span>`;
+      if (d === 1) return `<span class="natural">${n}</span>`;
       return `<span class="fraction"><span class="top">${n}</span><span class="bottom">${d}</span></span>`;
     }
     function operate(n1, d1, n2, d2, op) {
@@ -116,8 +118,8 @@
     }
     function toggleInput() {
       const type = document.getElementById('answerType').value;
-      document.getElementById('answerFraction').style.display = type === 'fraction' ? 'block' : 'none';
-      document.getElementById('answerInteger').style.display = type === 'integer' ? 'block' : 'none';
+      document.getElementById('answerFraction').style.display = type === 'fraction' ? 'inline-block' : 'none';
+      document.getElementById('answerInteger').style.display = type === 'integer' ? 'inline-block' : 'none';
     }
     function checkAnswer() {
       const type = document.getElementById('answerType').value;
@@ -139,12 +141,13 @@
         streak = 0;
         hatchPath = "";
         resetVisuals();
-        showResult("❌ 不正解。", false);
+        const correctDisplay = displayFraction(answerNumer, answerDenom);
+        showResult(`❌ 不正解。正答: ${correctDisplay}`, false);
       }
       generateQuestion();
     }
     function showResult(msg, correct) {
-      document.getElementById('result').textContent = msg;
+      document.getElementById('result').innerHTML = msg;
       document.getElementById('streak').textContent = `連続正解数: ${streak}`;
     }
     function resetVisuals() {
@@ -152,9 +155,11 @@
       eggImage.style.display = "none";
       dinoImage.style.display = "none";
       message.textContent = "";
+      description.textContent = "計算用紙を用意して取り組もう！";
     }
     function updateCreatureState() {
       resetVisuals();
+      if (streak >= 5) description.textContent = "連続正解でタマゴを育てよう！";
       if (streak === 5) {
         eggImage.src = "egg1.png";
         eggImage.style.display = "block";
