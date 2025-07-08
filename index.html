@@ -6,14 +6,15 @@
   <title>計算名人君プラス</title>
   <style>
     body { font-family: sans-serif; text-align: center; background: #f5f5fa; padding: 2em; }
-    .fraction { display: inline-block; text-align: center; margin: 0 5px; }
+    .fraction { display: inline-block; text-align: center; margin: 0 5px; font-size: 2em; }
     .fraction .top { border-bottom: 1px solid #000; display: block; }
     .fraction .bottom { display: block; }
-    input[type="text"] { font-size: 1.2em; padding: 0.5em; width: 150px; margin-bottom: 1em; }
-    button { font-size: 1.2em; padding: 0.6em 1.2em; margin: 0.5em; background-color: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; }
+    input[type="text"], input[type="number"] { font-size: 1.5em; padding: 0.5em; width: 100px; margin: 0.5em; text-align: center; }
+    button { font-size: 1.5em; padding: 0.6em 1.2em; margin: 1em; background-color: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; }
     button:hover { background-color: #45a049; }
-    select { font-size: 1em; padding: 0.3em; margin-bottom: 1em; }
-    #result, #streak, #message { font-size: 1.2em; margin-top: 1em; font-weight: bold; }
+    select { font-size: 1.2em; padding: 0.3em; margin-bottom: 1em; }
+    #question { font-size: 2em; margin: 1em 0; font-weight: bold; }
+    #result, #streak, #message { font-size: 1.5em; margin-top: 1em; font-weight: bold; }
     #egg-container, #dino-container { margin-top: 2em; }
     .creature-img { width: 180px; transition: filter 0.3s ease; display: none; margin: 10px auto; }
     .red { filter: hue-rotate(0deg); }
@@ -33,10 +34,12 @@
     </select>
   </div>
   <div id="answerFraction">
-    <input type="text" id="fractionAnswer" placeholder="例: 3/4">
+    <input type="number" id="numerator" placeholder="分子">
+    <span style="font-size: 1.5em;">／</span>
+    <input type="number" id="denominator" placeholder="分母">
   </div>
   <div id="answerInteger" style="display:none;">
-    <input type="text" id="integerAnswer" placeholder="例: 5">
+    <input type="number" id="integerAnswer" placeholder="整数で入力">
   </div>
   <button onclick="checkAnswer()">答え合わせ</button>
   <div id="result"></div>
@@ -54,7 +57,7 @@
     let streak = 0;
     let answerNumer = 0;
     let answerDenom = 1;
-    let hatchPath = ""; // "egg" or "hajiki"
+    let hatchPath = "";
     const eggImage = document.getElementById("eggImage");
     const dinoImage = document.getElementById("dino");
     const message = document.getElementById("message");
@@ -95,6 +98,7 @@
     }
     function generateQuestion() {
       let ops = ['+', '-', '*', '/'];
+      let symbols = {'+': '＋', '-': '－', '*': '×', '/': '÷'};
       let [a1, b1] = generateTerm();
       let [a2, b2] = generateTerm();
       let [a3, b3] = generateTerm();
@@ -104,7 +108,7 @@
       let [n2, d2] = operate(n1, d1, a3, b3, op2);
       if (n2 <= 0 || d2 <= 0 || n2 / d2 > 60) return generateQuestion();
       [answerNumer, answerDenom] = simplify(n2, d2);
-      const html = `${displayFraction(a1,b1)} ${op1} ${displayFraction(a2,b2)} ${op2} ${displayFraction(a3,b3)}`;
+      const html = `${displayFraction(a1,b1)} ${symbols[op1]} ${displayFraction(a2,b2)} ${symbols[op2]} ${displayFraction(a3,b3)}`;
       document.getElementById('question').innerHTML = `問題: ${html}`;
       document.getElementById('result').textContent = '';
     }
@@ -117,11 +121,8 @@
       const type = document.getElementById('answerType').value;
       let userNumer, userDenom;
       if (type === 'fraction') {
-        const input = document.getElementById('fractionAnswer').value.trim();
-        const parts = input.split("/");
-        if (parts.length !== 2) return showResult("⚠️ 分数は a/b の形式で！", false);
-        userNumer = parseInt(parts[0]);
-        userDenom = parseInt(parts[1]);
+        userNumer = parseInt(document.getElementById('numerator').value.trim());
+        userDenom = parseInt(document.getElementById('denominator').value.trim());
       } else {
         userNumer = parseInt(document.getElementById('integerAnswer').value.trim());
         userDenom = 1;
@@ -202,3 +203,4 @@
   </script>
 </body>
 </html>
+
