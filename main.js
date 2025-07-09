@@ -60,17 +60,29 @@ function calculate(a, b, op) {
 }
 
 function generateQuestion() {
-  const a = generateOperand();
-  const b = generateOperand();
-  const c = generateOperand();
+  let valid = false;
+  let a, b, c, op1, op2, part1, answer;
   const ops = ['+', '-', '×', '÷'];
-  const op1 = ops[Math.floor(Math.random() * ops.length)];
-  const op2 = ops[Math.floor(Math.random() * ops.length)];
 
-  // 括弧で先に評価する順序を明確にする（四則演算の優先順）
-  const part1 = calculate(a, b, op1);
-  currentAnswer = calculate(part1, c, op2);
+  while (!valid) {
+    a = generateOperand();
+    b = generateOperand();
+    c = generateOperand();
+    op1 = ops[Math.floor(Math.random() * ops.length)];
+    op2 = ops[Math.floor(Math.random() * ops.length)];
 
+    part1 = calculate(a, b, op1);
+    answer = calculate(part1, c, op2);
+
+    const part1Value = part1.numerator / part1.denominator;
+    const answerValue = answer.numerator / answer.denominator;
+
+    if (part1Value >= 0 && answerValue >= 0 && isFinite(answerValue)) {
+      valid = true;
+    }
+  }
+
+  currentAnswer = answer;
   const formatted = `(${formatFraction(a)} ${op1} ${formatFraction(b)}) ${op2} ${formatFraction(c)}`;
   document.getElementById("question").innerHTML = `問題：${formatted}`;
   document.getElementById("result").textContent = "";
