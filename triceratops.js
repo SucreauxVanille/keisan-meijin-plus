@@ -11,19 +11,26 @@ function handleCreatureProgress(streak) {
   message.textContent = "";
   description.textContent = "計算用紙を用意して取り組もう！";
 
-  if (streak === 3) {
-    eggImage.src = "egg1.png";
-    eggImage.style.display = "block";
-    eggImage.classList.add("fall-and-bounce"); // アニメーションクラス付与
-    description.textContent = "連続正解でタマゴを育てよう！";
-    message.textContent = "おや？何かのタマゴを見つけた！";
+if (streak === 3) {
+  eggImage.src = "egg1.png";
+  eggImage.style.display = "block";
+
+  // アニメーションクラスを再適用
+  eggImage.classList.remove("fall-and-bounce");
+  void eggImage.offsetWidth; // ←ブラウザに再描画を促す
+  eggImage.classList.add("fall-and-bounce");
+
+  description.textContent = "連続正解するとタマゴが育つかも！？";
+  message.textContent = "おや？何かのタマゴを見つけた！";
+}
+
   } else if (streak === 5) {
     if (Math.random() < 0.5) {
       eggImage.src = "egg2.png";
       message.textContent = "タマゴが割れそう！何か生まれるかも！";
     } else {
       eggImage.src = "hajiki.png";
-      message.textContent = "よく見たらタマゴじゃなかった…";
+      message.textContent = "よく見たらタマゴじゃなくてはじき丸くんだった…";
     }
     eggImage.style.display = "block";
     description.textContent = "タマゴの変化に注目だ！";
@@ -34,7 +41,7 @@ function handleCreatureProgress(streak) {
       message.textContent = "はじき丸くんも応援しているよ！";
     }
     eggImage.style.display = "block";
-    description.textContent = "タマゴの変化に注目だ！";
+    description.textContent = "タマゴの様子を見守ろう";
   } else if (streak === 10) {
     if (eggImage.src.includes("egg2")) {
       const variants = ["red", "blue", "green", "brachio"];
