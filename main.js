@@ -72,12 +72,14 @@ function generateQuestion() {
     op2 = ops[Math.floor(Math.random() * ops.length)];
 
     part1 = calculate(a, b, op1);
-    answer = calculate(part1, c, op2);
-
     const part1Value = part1.numerator / part1.denominator;
+
+    if (part1Value < 0 || !isFinite(part1Value)) continue;
+
+    answer = calculate(part1, c, op2);
     const answerValue = answer.numerator / answer.denominator;
 
-    if (part1Value >= 0 && answerValue >= 0 && isFinite(answerValue)) {
+    if (answerValue >= 0 && isFinite(answerValue)) {
       valid = true;
     }
   }
@@ -90,6 +92,7 @@ function generateQuestion() {
   document.getElementById("numerator").value = "";
   document.getElementById("denominator").value = "";
   document.getElementById("integerAnswer").value = "";
+  document.getElementById("nextButton").style.display = "none";
   startTimer([a, b, c]);
 }
 
@@ -140,8 +143,14 @@ function checkAnswer() {
     streak = 0;
     document.getElementById("result").textContent = `❌ 不正解。正答: ${currentAnswer.numerator}/${currentAnswer.denominator}`;
   }
+
   document.getElementById("streak").textContent = `連続正解数: ${streak}`;
   handleCreatureProgress(streak);
+  document.getElementById("nextButton").style.display = "inline-block";
+}
+
+function nextQuestion() {
+  document.getElementById("nextButton").style.display = "none";
   generateQuestion();
 }
 
