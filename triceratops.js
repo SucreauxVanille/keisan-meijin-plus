@@ -56,6 +56,9 @@ function updateTriceratops(streak) {
     description.textContent = "また新しいタマゴを探しにいこう！";
   }
 }
+function handleCreatureProgress(streak) {
+  console.log("トリケラトプス育成機能はまだ未実装です", streak);
+}
 
 function colorName(colorClass) {
   switch (colorClass) {
