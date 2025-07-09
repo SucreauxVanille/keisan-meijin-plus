@@ -22,7 +22,6 @@ if (streak === 3) {
 
   description.textContent = "連続正解するとタマゴが育つかも！？";
   message.textContent = "おや？何かのタマゴを見つけた！";
-}
 
   } else if (streak === 5) {
     if (Math.random() < 0.5) {
