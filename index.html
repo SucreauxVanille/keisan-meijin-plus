@@ -5,232 +5,134 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>計算名人君プラス</title>
   <style>
-    body { font-family: sans-serif; text-align: center; background: #f5f5fa; padding: 2em; }
-    .fraction, .natural { display: inline-block; vertical-align: middle; text-align: center; margin: 0 5px; font-size: 1.8em; line-height: 1.2em; }
-    .fraction .top { border-bottom: 1px solid #000; display: block; padding: 0 5px; }
-    .fraction .bottom { display: block; padding: 0 5px; }
-    .fraction-input { display: inline-block; vertical-align: middle; margin: 0 5px; text-align: center; }
-    .fraction-input input { display: block; width: 60px; font-size: 1.5em; margin: 5px auto; text-align: center; }
-    input[type="number"] { font-size: 1.5em; padding: 0.5em; width: 100px; margin: 0.5em auto; text-align: center; display: block; }
-    button { font-size: 1.5em; padding: 0.6em 1.2em; margin: 1em; background-color: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; }
-    button:hover { background-color: #45a049; }
-    select { font-size: 1.2em; padding: 0.3em; margin-bottom: 1em; }
-    #question { font-size: 1.8em; margin: 1em 0; font-weight: bold; }
-    #description { font-size: 1.2em; margin-bottom: 1em; }
-    #result, #streak, #message, #timer { font-size: 1.5em; margin-top: 1em; font-weight: bold; }
-    #egg-container, #dino-container { margin-top: 2em; }
-    .creature-img { width: 180px; transition: filter 0.3s ease; display: none; margin: 10px auto; }
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: #003300;
+      padding: 2em 0;
+    }
+    .container {
+      background: #f5f5fa;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2em;
+      border-radius: 12px;
+    }
+    .fraction, .natural {
+      display: inline-block;
+      vertical-align: middle;
+      text-align: center;
+      margin: 0 5px;
+      font-size: 1.8em;
+      line-height: 1.2em;
+    }
+    .fraction .top {
+      border-bottom: 1px solid #000;
+      display: block;
+      padding: 0 5px;
+    }
+    .fraction .bottom {
+      display: block;
+      padding: 0 5px;
+    }
+    .fraction-input {
+      display: inline-block;
+      vertical-align: middle;
+      margin: 0 5px;
+      text-align: center;
+    }
+    .fraction-input input {
+      display: block;
+      width: 60px;
+      font-size: 1.5em;
+      margin: 5px auto;
+      text-align: center;
+    }
+    input[type="number"] {
+      font-size: 1.5em;
+      padding: 0.5em;
+      width: 100px;
+      margin: 0.5em auto;
+      text-align: center;
+      display: block;
+    }
+    button {
+      font-size: 1.5em;
+      padding: 0.6em 1.2em;
+      margin: 1em;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    select {
+      font-size: 1.2em;
+      padding: 0.3em;
+      margin-bottom: 1em;
+    }
+    #question {
+      font-size: 1.8em;
+      margin: 1em 0;
+      font-weight: bold;
+    }
+    #description {
+      font-size: 1.2em;
+      margin-bottom: 1em;
+    }
+    #result, #streak, #message, #timer {
+      font-size: 1.5em;
+      margin-top: 1em;
+      font-weight: bold;
+    }
+    #egg-container, #dino-container {
+      margin-top: 2em;
+    }
+    .creature-img {
+      width: 180px;
+      transition: filter 0.3s ease;
+      display: none;
+      margin: 10px auto;
+    }
     .red { filter: hue-rotate(0deg); }
     .blue { filter: hue-rotate(200deg); }
     .green { filter: hue-rotate(100deg); }
   </style>
 </head>
 <body>
-  <h1>計算名人君プラス</h1>
-  <p id="description">計算用紙を用意して取り組もう！</p>
-  <div id="question">問題を読み込み中...</div>
-  <div>
-    <label for="answerType">答えの形式：</label>
-    <select id="answerType" onchange="toggleInput()">
-      <option value="fraction">分数</option>
-      <option value="integer">整数</option>
-    </select>
+  <div class="container">
+    <h1>計算名人君プラス</h1>
+    <p id="description">計算用紙を用意して取り組もう！</p>
+    <div id="question">問題を読み込み中...</div>
+    <div>
+      <label for="answerType">答えの形式：</label>
+      <select id="answerType" onchange="toggleInput()">
+        <option value="fraction">分数</option>
+        <option value="integer">整数</option>
+      </select>
+    </div>
+    <div id="answerFraction" class="fraction-input">
+      <input type="number" id="numerator" placeholder="分子">
+      <div style="font-size: 1.5em; line-height: 0.5em;">―</div>
+      <input type="number" id="denominator" placeholder="分母">
+    </div>
+    <div id="answerInteger" class="fraction-input" style="display:none;">
+      <input type="number" id="integerAnswer" placeholder="整数で入力">
+    </div>
+    <button onclick="checkAnswer()">答え合わせ</button>
+    <div id="result"></div>
+    <div id="streak">連続正解数: 0</div>
+    <div id="timer"></div>
+    <div id="message"></div>
+    <div id="egg-container">
+      <img id="eggImage" class="creature-img" src="" alt="たまご表示">
+    </div>
+    <div id="dino-container">
+      <img id="dino" src="triceratops.png" class="creature-img red" alt="トリケラトプス">
+    </div>
   </div>
-  <div id="answerFraction" class="fraction-input">
-    <input type="number" id="numerator" placeholder="分子">
-    <div style="font-size: 1.5em; line-height: 0.5em;">―</div>
-    <input type="number" id="denominator" placeholder="分母">
-  </div>
-  <div id="answerInteger" class="fraction-input" style="display:none;">
-    <input type="number" id="integerAnswer" placeholder="整数で入力">
-  </div>
-  <button onclick="checkAnswer()">答え合わせ</button>
-  <div id="result"></div>
-  <div id="streak">連続正解数: 0</div>
-  <div id="timer"></div>
-  <div id="message"></div>
-
-  <div id="egg-container">
-    <img id="eggImage" class="creature-img" src="" alt="たまご表示">
-  </div>
-  <div id="dino-container">
-    <img id="dino" src="triceratops.png" class="creature-img red" alt="トリケラトプス">
-  </div>
-
-  <script>
-    let streak = 0;
-    let answerNumer = 0;
-    let answerDenom = 1;
-    let hatchPath = "";
-    let timerInterval;
-    let elapsedTime = 0;
-    let timeLimit = 40;
-
-    const eggImage = document.getElementById("eggImage");
-    const dinoImage = document.getElementById("dino");
-    const message = document.getElementById("message");
-    const description = document.getElementById("description");
-    const timerDisplay = document.getElementById("timer");
-
-    function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
-    function simplify(n, d) {
-      const g = gcd(Math.abs(n), Math.abs(d));
-      return [n / g, d / g];
-    }
-    function getRandomInt(min, max) {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-    function generateTerm() {
-      const isFraction = Math.random() < 0.7;
-      if (isFraction) {
-        let numer = getRandomInt(2, 24);
-        let denom = getRandomInt(2, 12);
-        while (numer <= denom) numer++;
-        return simplify(numer, denom);
-      } else {
-        let value = getRandomInt(1, 20);
-        return [value, 1];
-      }
-    }
-    function displayFraction(n, d) {
-      if (d === 1) return `<span class="natural">${n}</span>`;
-      return `<span class="fraction"><span class="top">${n}</span><span class="bottom">${d}</span></span>`;
-    }
-    function operate(n1, d1, n2, d2, op) {
-      let n, d;
-      switch (op) {
-        case '+': n = n1 * d2 + n2 * d1; d = d1 * d2; break;
-        case '-': n = n1 * d2 - n2 * d1; d = d1 * d2; break;
-        case '*': n = n1 * n2; d = d1 * d2; break;
-        case '/': n = n1 * d2; d = d1 * n2; break;
-      }
-      return simplify(n, d);
-    }
-    function generateQuestion() {
-      clearInterval(timerInterval);
-      elapsedTime = 0;
-      timerDisplay.textContent = "";
-      let ops = ['+', '-', '*', '/'];
-      let symbols = {'+': '＋', '-': '－', '*': '×', '/': '÷'};
-      let [a1, b1] = generateTerm();
-      let [a2, b2] = generateTerm();
-      let [a3, b3] = generateTerm();
-      let op1 = ops[getRandomInt(0, 3)];
-      let op2 = ops[getRandomInt(0, 3)];
-      let hasFraction = [b1, b2, b3].some(b => b !== 1);
-      timeLimit = hasFraction ? 40 : 20;
-      let [n1, d1] = operate(a1, b1, a2, b2, op1);
-      let [n2, d2] = operate(n1, d1, a3, b3, op2);
-      if (n2 <= 0 || d2 <= 0 || n2 / d2 > 60) return generateQuestion();
-      [answerNumer, answerDenom] = simplify(n2, d2);
-      const html = `${displayFraction(a1,b1)} ${symbols[op1]} ${displayFraction(a2,b2)} ${symbols[op2]} ${displayFraction(a3,b3)}`;
-      document.getElementById('question').innerHTML = `問題: ${html}`;
-      document.getElementById('result').textContent = '';
-      startTimer();
-    }
-    function toggleInput() {
-      const type = document.getElementById('answerType').value;
-      document.getElementById('answerFraction').style.display = type === 'fraction' ? 'inline-block' : 'none';
-      document.getElementById('answerInteger').style.display = type === 'integer' ? 'inline-block' : 'none';
-    }
-    function checkAnswer() {
-      clearInterval(timerInterval);
-      const type = document.getElementById('answerType').value;
-      let userNumer, userDenom;
-      if (type === 'fraction') {
-        userNumer = parseInt(document.getElementById('numerator').value.trim());
-        userDenom = parseInt(document.getElementById('denominator').value.trim());
-      } else {
-        userNumer = parseInt(document.getElementById('integerAnswer').value.trim());
-        userDenom = 1;
-      }
-      if (!userNumer || !userDenom || userDenom === 0) return showResult("⚠️ 入力エラー", false);
-      [userNumer, userDenom] = simplify(userNumer, userDenom);
-      if (userNumer === answerNumer && userDenom === answerDenom) {
-        streak++;
-        updateCreatureState();
-        showResult("⭕ 正解！", true);
-      } else {
-        streak = 0;
-        hatchPath = "";
-        resetVisuals();
-        const correctDisplay = displayFraction(answerNumer, answerDenom);
-        showResult(`❌ 不正解。正答: ${correctDisplay}`, false);
-      }
-      generateQuestion();
-    }
-    function showResult(msg, correct) {
-      document.getElementById('result').innerHTML = msg;
-      document.getElementById('streak').textContent = `連続正解数: ${streak}`;
-    }
-    function resetVisuals() {
-      eggImage.src = "";
-      eggImage.style.display = "none";
-      dinoImage.style.display = "none";
-      message.textContent = "";
-      description.textContent = "計算用紙を用意して取り組もう！";
-    }
-    function updateCreatureState() {
-      resetVisuals();
-      if (streak >= 5) description.textContent = "連続正解でタマゴを育てよう！";
-      if (streak === 5) {
-        eggImage.src = "egg1.png";
-        eggImage.style.display = "block";
-        message.textContent = "おや？何かのタマゴを見つけた！";
-      } else if (streak >= 6 && streak <= 9) {
-        if (hatchPath === "" || hatchPath === "egg") {
-          hatchPath = "egg";
-          eggImage.src = "egg1.png";
-          eggImage.style.display = "block";
-          message.textContent = "タマゴが動いているみたい";
-        }
-      } else if (streak === 10) {
-        hatchPath = Math.random() < 0.5 ? "egg" : "hajiki";
-        if (hatchPath === "egg") {
-          eggImage.src = "egg2.png";
-          eggImage.style.display = "block";
-          message.textContent = "タマゴが割れそう！何か生まれるかも！";
-        } else {
-          eggImage.src = "hajiki.png";
-          eggImage.style.display = "block";
-          message.textContent = "よく見たらタマゴじゃなかった…";
-        }
-      } else if (streak >= 11 && streak <= 14) {
-        if (hatchPath === "egg") {
-          eggImage.src = "egg2.png";
-          eggImage.style.display = "block";
-          message.textContent = "タマゴの中身も喜んでるよ！";
-        } else if (hatchPath === "hajiki") {
-          eggImage.src = "hajiki.png";
-          eggImage.style.display = "block";
-          message.textContent = "はじき丸くんも応援しているよ！";
-        }
-      } else if (streak === 15) {
-        if (hatchPath === "egg") {
-          const colors = ["red", "blue", "green"];
-          const chosen = colors[getRandomInt(0, colors.length - 1)];
-          dinoImage.className = `creature-img ${chosen}`;
-          dinoImage.style.display = "block";
-          message.textContent = `タマゴから${chosen === "red" ? "赤" : chosen === "blue" ? "青" : "緑"}トリケラトプスが生まれた！`;
-        } else if (hatchPath === "hajiki") {
-          eggImage.src = "hajiki.png";
-          eggImage.style.display = "block";
-          message.textContent = "そういえば、本当にタマゴがゲットできることもあるみたいだよ";
-        }
-      }
-    }
-    function startTimer() {
-      timerInterval = setInterval(() => {
-        elapsedTime++;
-        if (elapsedTime <= timeLimit) {
-          timerDisplay.textContent = `経過時間: ${elapsedTime}秒（目安: ${timeLimit}秒）`;
-        } else {
-          clearInterval(timerInterval);
-          timerDisplay.textContent = `${timeLimit}秒経過！答えよう！`;
-        }
-      }, 1000);
-    }
-    window.onload = generateQuestion;
-  </script>
 </body>
 </html>
