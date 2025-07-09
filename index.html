@@ -134,188 +134,175 @@
       <img id="dino" src="triceratops.png" class="creature-img red" alt="トリケラトプス">
     </div>
   </div>
-  <script>
-    let streak = 0;
-    let answerNumer = 0;
-    let answerDenom = 1;
-    let hatchPath = "";
-    let timerInterval;
-    let elapsedTime = 0;
-    let timeLimit = 40;
+<script>
+// --- 乱数ユーティリティ ---
+function randInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
-    const eggImage = document.getElementById("eggImage");
-    const dinoImage = document.getElementById("dino");
-    const message = document.getElementById("message");
-    const description = document.getElementById("description");
-    const timerDisplay = document.getElementById("timer");
+function gcd(a, b) {
+  return b === 0 ? a : gcd(b, a % b);
+}
 
-    function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
-    function simplify(n, d) {
-      const g = gcd(Math.abs(n), Math.abs(d));
-      return [n / g, d / g];
-    }
-    function getRandomInt(min, max) {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-    function generateTerm() {
-      const isFraction = Math.random() < 0.7;
-      if (isFraction) {
-        let numer = getRandomInt(2, 24);
-        let denom = getRandomInt(2, 12);
-        while (numer >= denom) numer = getRandomInt(2, 24), denom = getRandomInt(2, 12);
-        return simplify(numer, denom);
-      } else {
-        let value = getRandomInt(1, 20);
-        return [value, 1];
-      }
-    }
-    function displayFraction(n, d) {
-      if (d === 1) return `<span class="natural">${n}</span>`;
-      return `<span class="fraction"><span class="top">${n}</span><span class="bottom">${d}</span></span>`;
-    }
-    function operate(n1, d1, n2, d2, op) {
-      let n, d;
-      switch (op) {
-        case '+': n = n1 * d2 + n2 * d1; d = d1 * d2; break;
-        case '-': n = n1 * d2 - n2 * d1; d = d1 * d2; break;
-        case '*': n = n1 * n2; d = d1 * d2; break;
-        case '/': n = n1 * d2; d = d1 * n2; break;
-      }
-      return simplify(n, d);
-    }
-    function generateQuestion() {
-      clearInterval(timerInterval);
-      elapsedTime = 0;
-      timerDisplay.textContent = "";
-      let ops = ['+', '-', '*', '/'];
-      let symbols = {'+': '＋', '-': '－', '*': '×', '/': '÷'};
-      let [a1, b1] = generateTerm();
-      let [a2, b2] = generateTerm();
-      let [a3, b3] = generateTerm();
-      let op1 = ops[getRandomInt(0, 3)];
-      let op2 = ops[getRandomInt(0, 3)];
-      let hasFraction = [b1, b2, b3].some(b => b !== 1);
-      timeLimit = hasFraction ? 40 : 20;
+function simplify(numer, denom) {
+  const g = gcd(numer, denom);
+  return [numer / g, denom / g];
+}
 
-      // 四則演算の優先順位を考慮
-      let part1, part2;
-      if (op2 === '*' || op2 === '/') {
-        part2 = operate(a2, b2, a3, b3, op2);
-        [answerNumer, answerDenom] = operate(a1, b1, part2[0], part2[1], op1);
-      } else {
-        part1 = operate(a1, b1, a2, b2, op1);
-        [answerNumer, answerDenom] = operate(part1[0], part1[1], a3, b3, op2);
-      }
+// --- 表示関連 ---
+function toggleInput() {
+  const type = document.getElementById("answerType").value;
+  document.getElementById("answerFraction").style.display = type === "fraction" ? "inline-block" : "none";
+  document.getElementById("answerInteger").style.display = type === "integer" ? "inline-block" : "none";
+}
 
-      if (answerNumer <= 0 || answerDenom <= 0 || answerNumer / answerDenom > 60) return generateQuestion();
-      const html = `${displayFraction(a1,b1)} ${symbols[op1]} ${displayFraction(a2,b2)} ${symbols[op2]} ${displayFraction(a3,b3)}`;
-      document.getElementById('question').innerHTML = `問題: ${html}`;
-      document.getElementById('result').textContent = '';
-      startTimer();
+// --- 問題生成 ---
+let currentNumer = 0;
+let currentDenom = 1;
+let streak = 0;
+let timerInterval;
+let elapsed = 0;
+let hintGiven = false;
+
+function generateOperand() {
+  const isFraction = Math.random() < 0.5;
+  if (isFraction) {
+    let denom = randInt(2, 12);
+    let numer = randInt(1, denom - 1);
+    return { n: numer, d: denom, str: makeFractionHTML(numer, denom), val: numer / denom };
+  } else {
+    const value = randInt(1, 20);
+    return { n: value, d: 1, str: `<span class='natural'>${value}</span>`, val: value };
+  }
+}
+
+function makeFractionHTML(n, d) {
+  return `<span class='fraction'><span class='top'>${n}</span><span class='bottom'>${d}</span></span>`;
+}
+
+function generateQuestion() {
+  let a, b, c, op1, op2, expr, val;
+  const ops = ["+", "-", "*", "/"];
+
+  while (true) {
+    a = generateOperand();
+    b = generateOperand();
+    c = generateOperand();
+    op1 = ops[randInt(0, 3)];
+    op2 = ops[randInt(0, 3)];
+
+    // 括弧を明示する
+    expr = `(${a.val} ${op1} ${b.val}) ${op2} ${c.val}`;
+    try {
+      val = eval(expr);
+    } catch {
+      continue;
     }
-    function toggleInput() {
-      const type = document.getElementById('answerType').value;
-      document.getElementById('answerFraction').style.display = type === 'fraction' ? 'inline-block' : 'none';
-      document.getElementById('answerInteger').style.display = type === 'integer' ? 'inline-block' : 'none';
+    if (!isFinite(val) || val < 0 || val > 60) continue;
+
+    const [n, d] = simplify(Math.round(val * 1000000), 1000000);
+    currentNumer = n;
+    currentDenom = d;
+
+    document.getElementById("question").innerHTML = `問題：(${a.str} ${op1} ${b.str}) ${op2} ${c.str}`;
+    document.getElementById("result").innerText = "";
+    document.getElementById("message").innerText = "";
+    document.getElementById("eggImage").style.display = "none";
+    document.getElementById("dino").style.display = "none";
+    document.getElementById("description").innerText = streak >= 5 ? "連続正解でタマゴを育てよう！" : "計算用紙を用意して取り組もう！";
+
+    startTimer();
+    break;
+  }
+}
+
+// --- タイマー制御 ---
+function startTimer() {
+  clearInterval(timerInterval);
+  elapsed = 0;
+  hintGiven = false;
+  document.getElementById("timer").innerText = `経過時間: 0秒（目安: ${currentDenom === 1 ? 20 : 40}秒）`;
+  timerInterval = setInterval(() => {
+    elapsed++;
+    document.getElementById("timer").innerText = `経過時間: ${elapsed}秒（目安: ${currentDenom === 1 ? 20 : 40}秒）`;
+    if (!hintGiven && elapsed >= (currentDenom === 1 ? 20 : 40)) {
+      document.getElementById("message").innerText = `${elapsed}秒経過！答えよう！`;
+      hintGiven = true;
     }
-    function checkAnswer() {
-      clearInterval(timerInterval);
-      const type = document.getElementById('answerType').value;
-      let userNumer, userDenom;
-      if (type === 'fraction') {
-        userNumer = parseInt(document.getElementById('numerator').value.trim());
-        userDenom = parseInt(document.getElementById('denominator').value.trim());
-      } else {
-        userNumer = parseInt(document.getElementById('integerAnswer').value.trim());
-        userDenom = 1;
-      }
-      if (!userNumer || !userDenom || userDenom === 0) return showResult("⚠️ 入力エラー", false);
-      [userNumer, userDenom] = simplify(userNumer, userDenom);
-      if (userNumer === answerNumer && userDenom === answerDenom) {
-        streak++;
-        updateCreatureState();
-        showResult("⭕ 正解！", true);
-        generateQuestion();
-      } else {
-        streak = 0;
-        hatchPath = "";
-        resetVisuals();
-        const correctDisplay = displayFraction(answerNumer, answerDenom);
-        showResult(`❌ 不正解。正答: ${correctDisplay} `, false);
-      }
+  }, 1000);
+}
+
+// --- 正誤判定 ---
+function checkAnswer() {
+  clearInterval(timerInterval);
+  const type = document.getElementById("answerType").value;
+  let isCorrect = false;
+  if (type === "fraction") {
+    const n = parseInt(document.getElementById("numerator").value);
+    const d = parseInt(document.getElementById("denominator").value);
+    if (d !== 0) {
+      const [sn, sd] = simplify(n, d);
+      const [cn, cd] = simplify(currentNumer, currentDenom);
+      isCorrect = sn === cn && sd === cd;
     }
-    function showResult(msg, correct) {
-      document.getElementById('result').innerHTML = msg;
-      document.getElementById('streak').textContent = `連続正解数: ${streak}`;
+  } else {
+    const user = parseInt(document.getElementById("integerAnswer").value);
+    isCorrect = currentDenom === 1 && user === currentNumer;
+  }
+  
+  if (isCorrect) {
+    streak++;
+    document.getElementById("result").innerText = "⭕ 正解！";
+    updateProgress();
+    setTimeout(generateQuestion, 1000);
+  } else {
+    streak = 0;
+    const [sn, sd] = simplify(currentNumer, currentDenom);
+    document.getElementById("result").innerText = `❌ 不正解。正答: ${sd === 1 ? sn : `${sn}/${sd}`}`;
+    const btn = document.createElement("button");
+    btn.innerText = "次へ";
+    btn.onclick = generateQuestion;
+    document.getElementById("result").appendChild(btn);
+  }
+  document.getElementById("streak").innerText = `連続正解数: ${streak}`;
+}
+
+// --- トリケラトプス育成ロジック ---
+function updateProgress() {
+  const egg = document.getElementById("eggImage");
+  const dino = document.getElementById("dino");
+  if (streak === 5) {
+    egg.src = "egg1.png";
+    egg.style.display = "block";
+    document.getElementById("message").innerText = "おや？何かのタマゴを見つけた！";
+  } else if (streak === 10) {
+    const rare = Math.random() < 0.5;
+    if (rare) {
+      egg.src = "egg2.png";
+      document.getElementById("message").innerText = "タマゴが割れそう！何か生まれるかも！";
+    } else {
+      egg.src = "hajiki.png";
+      document.getElementById("message").innerText = "よく見たらタマゴじゃなかった…";
     }
-    function resetVisuals() {
-      eggImage.src = "";
-      eggImage.style.display = "none";
-      dinoImage.style.display = "none";
-      message.textContent = "";
-      description.textContent = "計算用紙を用意して取り組もう！";
+    egg.style.display = "block";
+  } else if (streak === 15) {
+    if (egg.src.includes("egg2")) {
+      const colors = ["red", "blue", "green"];
+      const color = colors[randInt(0, 2)];
+      dino.className = `creature-img ${color}`;
+      dino.style.display = "block";
+      document.getElementById("message").innerText = `タマゴから${color}トリケラトプスが生まれた！`;
+    } else if (egg.src.includes("hajiki")) {
+      document.getElementById("message").innerText = "そういえば、本当にタマゴがゲットできることもあるみたいだよ。";
     }
-    function updateCreatureState() {
-      resetVisuals();
-      if (streak >= 5) description.textContent = "連続正解でタマゴを育てよう！";
-      if (streak === 5) {
-        eggImage.src = "egg1.png";
-        eggImage.style.display = "block";
-        message.textContent = "おや？何かのタマゴを見つけた！";
-      } else if (streak >= 6 && streak <= 9) {
-        if (hatchPath === "" || hatchPath === "egg") {
-          hatchPath = "egg";
-          eggImage.src = "egg1.png";
-          eggImage.style.display = "block";
-          message.textContent = "タマゴが動いているみたい";
-        }
-      } else if (streak === 10) {
-        hatchPath = Math.random() < 0.5 ? "egg" : "hajiki";
-        if (hatchPath === "egg") {
-          eggImage.src = "egg2.png";
-          eggImage.style.display = "block";
-          message.textContent = "タマゴが割れそう！何か生まれるかも！";
-        } else {
-          eggImage.src = "hajiki.png";
-          eggImage.style.display = "block";
-          message.textContent = "よく見たらタマゴじゃなかった…";
-        }
-      } else if (streak >= 11 && streak <= 14) {
-        if (hatchPath === "egg") {
-          eggImage.src = "egg2.png";
-          eggImage.style.display = "block";
-          message.textContent = "タマゴの中身も喜んでるよ！";
-        } else if (hatchPath === "hajiki") {
-          eggImage.src = "hajiki.png";
-          eggImage.style.display = "block";
-          message.textContent = "はじき丸くんも応援しているよ！";
-        }
-      } else if (streak === 15) {
-        if (hatchPath === "egg") {
-          const colors = ["red", "blue", "green"];
-          const chosen = colors[getRandomInt(0, colors.length - 1)];
-          dinoImage.className = `creature-img ${chosen}`;
-          dinoImage.style.display = "block";
-          message.textContent = `タマゴから${chosen === "red" ? "赤" : chosen === "blue" ? "青" : "緑"}トリケラトプスが生まれた！`;
-        } else if (hatchPath === "hajiki") {
-          eggImage.src = "hajiki.png";
-          eggImage.style.display = "block";
-          message.textContent = "そういえば、本当にタマゴがゲットできることもあるみたいだよ";
-        }
-      }
-    }
-    function startTimer() {
-      timerInterval = setInterval(() => {
-        elapsedTime++;
-        if (elapsedTime <= timeLimit) {
-          timerDisplay.textContent = `経過時間: ${elapsedTime}秒（目安: ${timeLimit}秒）`;
-        } else {
-          clearInterval(timerInterval);
-          timerDisplay.textContent = `${timeLimit}秒経過！答えよう！`;
-        }
-      }, 1000);
-    }
-    window.onload = generateQuestion;
-  </script>
+  }
+}
+
+window.onload = () => {
+  toggleInput();
+  generateQuestion();
+};
+</script>
+
 </body>
 </html>
