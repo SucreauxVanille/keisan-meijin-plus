@@ -1,15 +1,17 @@
+html_content = """
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>計算名人君プラス</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>計算名人君プラス - トリケラ育成</title>
   <style>
     body {
       font-family: sans-serif;
       text-align: center;
       background: #003300;
       padding: 2em 0;
+      margin: 0;
     }
     .container {
       background: #f5f5fa;
@@ -17,169 +19,162 @@
       margin: 0 auto;
       padding: 2em;
       border-radius: 12px;
+      box-sizing: border-box;
     }
-    .fraction, .natural {
-      display: inline-block;
-      vertical-align: middle;
-      text-align: center;
-      margin: 0 5px;
-      font-size: 1.8em;
-      line-height: 1.2em;
-    }
-    .fraction .top {
-      border-bottom: 1px solid #000;
-      display: block;
-      padding: 0 5px;
-    }
-    .fraction .bottom {
-      display: block;
-      padding: 0 5px;
-    }
-    .fraction-input {
-      display: inline-block;
-      vertical-align: middle;
-      margin: 0 5px;
-      text-align: center;
-    }
-    .fraction-input input {
-      display: block;
-      width: 60px;
-      font-size: 1.5em;
-      margin: 5px auto;
-      text-align: center;
-    }
-    input[type="number"] {
-      font-size: 1.5em;
-      padding: 0.6em;
-      width: 100px;
-      margin: 0.6em auto;
-      text-align: center;
-      display: block;
-    }
-    button {
-      font-size: 1.5em;
-      padding: 0.6em 1.2em;
-      margin: 1em;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-    select {
-      font-size: 1.2em;
-      padding: 0.3em;
-      margin-bottom: 1em;
-    }
-#question {
-  font-size: 1.5em;
-  line-height: 1.4em;
-}
-
-.fraction, .natural {
-  font-size: 1.5em;
-  line-height: 1.2em;
-}
-
-.fraction .top, .fraction .bottom {
-  padding: 0 6px;
-}
-  #nextButton {
-    margin-top: 1em;
-    font-size: 1.2em;
-  }
-
     #description {
       font-size: 1.2em;
       margin-bottom: 1em;
     }
-    #result, #streak, #message, #timer {
+    #message {
       font-size: 1.5em;
       margin-top: 1em;
       font-weight: bold;
+      min-height: 2em;
     }
+
     #egg-container, #dino-container {
       margin-top: 2em;
+      height: 200px; /* 表示領域固定で上下ずれ防止 */
+      position: relative;
     }
     .creature-img {
       width: 180px;
       transition: filter 0.3s ease;
       display: none;
       margin: 10px auto;
+      position: relative;
     }
     .red { filter: hue-rotate(0deg); }
     .blue { filter: hue-rotate(200deg); }
     .green { filter: hue-rotate(100deg); }
 
-/* タマゴ落下→バウンドアニメーション */
-@keyframes fallAndBounce {
-  0% {
-    transform: translateY(-300px);
-    opacity: 0;
-  }
-  60% {
-    transform: translateY(0px);
-    opacity: 1;
-  }
-  75% {
-    transform: translateY(-20px);
-  }
-  85% {
-    transform: translateY(0px);
-  }
-  92% {
-    transform: translateY(-10px);
-  }
-  100% {
-    transform: translateY(0px);
-  }
-}
+    /* タマゴ落下→バウンドアニメーション */
+    @keyframes fallAndBounce {
+      0% {
+        transform: translateY(-300px);
+        opacity: 0;
+      }
+      60% {
+        transform: translateY(0px);
+        opacity: 1;
+      }
+      75% {
+        transform: translateY(-20px);
+      }
+      85% {
+        transform: translateY(0px);
+      }
+      92% {
+        transform: translateY(-10px);
+      }
+      100% {
+        transform: translateY(0px);
+      }
+    }
 
-.fall-and-bounce {
-  animation: fallAndBounce 1s ease-out;
-}  
+    .fall-and-bounce {
+      animation: fallAndBounce 1s ease-out;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>計算名人君プラス</h1>
     <p id="description">計算用紙を用意して取り組もう！</p>
-    <div id="question">問題を読み込み中...</div>
-    <div>
-      <label for="answerType">答えの形式：</label>
-      <select id="answerType" onchange="toggleInput()">
-        <option value="fraction">分数</option>
-        <option value="integer">整数</option>
-      </select>
-    </div>
-    <div id="answerFraction" class="fraction-input">
-      <input type="number" id="numerator" placeholder="分子">
-      <div style="font-size: 1.5em; line-height: 0.5em;">―</div>
-      <input type="number" id="denominator" placeholder="分母">
-    </div>
-    <div id="answerInteger" class="fraction-input" style="display:none;">
-      <input type="number" id="integerAnswer" placeholder="整数で入力">
-    </div>
-    <button onclick="checkAnswer()">答え合わせ</button>
-    <div id="result"></div>
-    <button id="nextButton" style="display:none;" onclick="nextQuestion()">次へ</button>
-
-    <div id="streak">連続正解数: 0</div>
-    <div id="timer"></div>
     <div id="message"></div>
     <div id="egg-container">
-      <img id="eggImage" class="creature-img" src="" alt="たまご表示">
+      <img id="eggImage" class="creature-img" src="" alt="たまご表示" />
     </div>
     <div id="dino-container">
-      <img id="dino" src="triceratops.png" class="creature-img red" alt="トリケラトプス">
+      <img id="dino" src="triceratops.png" class="creature-img red" alt="トリケラトプス" />
     </div>
   </div>
-<script src="triceratops.js" defer></script>
-<script src="main.js" defer></script>
+  <script>
+    // ここにhandleCreatureProgress関数の抜粋的動作版
+    function colorName(colorClass) {
+      switch(colorClass) {
+        case "red": return "赤";
+        case "blue": return "青";
+        case "green": return "緑";
+        default: return "";
+      }
+    }
 
+    function handleCreatureProgress(streak) {
+      const description = document.getElementById("description");
+      const message = document.getElementById("message");
+      const eggImage = document.getElementById("eggImage");
+      const dino = document.getElementById("dino");
+
+      eggImage.style.display = "none";
+      eggImage.classList.remove("fall-and-bounce");
+      dino.style.display = "none";
+      message.textContent = "";
+      description.textContent = "計算用紙を用意して取り組もう！";
+
+      if (streak === 3) {
+        eggImage.src = "egg1.png";
+        eggImage.style.display = "block";
+
+        eggImage.classList.remove("fall-and-bounce");
+        void eggImage.offsetWidth; // 再描画トリガー
+        eggImage.classList.add("fall-and-bounce");
+
+        description.textContent = "連続正解でタマゴを育てよう！";
+        message.textContent = "おや？何かのタマゴを見つけた！";
+      } else if (streak === 5) {
+        if (Math.random() < 0.5) {
+          eggImage.src = "egg2.png";
+          message.textContent = "タマゴが割れそう！何か生まれるかも！";
+        } else {
+          eggImage.src = "hajiki.png";
+          message.textContent = "よく見たらタマゴじゃなかった…";
+        }
+        eggImage.style.display = "block";
+        description.textContent = "タマゴの変化に注目だ！";
+      } else if (streak > 5 && streak < 10) {
+        if (eggImage.src.includes("egg2")) {
+          message.textContent = "タマゴの中身も喜んでるよ！";
+        } else if (eggImage.src.includes("hajiki")) {
+          message.textContent = "はじき丸くんも応援しているよ！";
+        }
+        eggImage.style.display = "block";
+        description.textContent = "タマゴの変化に注目だ！";
+      } else if (streak === 10) {
+        if (eggImage.src.includes("egg2")) {
+          const variants = ["red", "blue", "green", "brachio"];
+          const choice = variants[Math.floor(Math.random() * variants.length)];
+          if (choice === "brachio") {
+            dino.src = "brachio.png";
+            message.textContent = "タマゴからブラキオサウルスが生まれた！";
+          } else {
+            dino.src = "triceratops.png";
+            dino.className = "creature-img " + choice;
+            message.textContent = `タマゴから${colorName(choice)}トリケラトプスが生まれた！`;
+          }
+          dino.style.display = "block";
+        } else {
+          message.textContent = "そういえば、本当にタマゴがゲットできることもあるみたいだよ";
+        }
+        eggImage.style.display = "none";
+        description.textContent = "また新しいタマゴを探しにいこう！";
+      }
+    }
+
+    // デモ用：連続正解数を簡単に変更して動作確認
+    let currentStreak = 0;
+    setInterval(() => {
+      currentStreak++;
+      if(currentStreak > 12) currentStreak = 0;
+      handleCreatureProgress(currentStreak);
+    }, 3000);
+  </script>
 </body>
 </html>
+"""
 
+path = "/mnt/data/triceratops_sample_index.html"
+with open(path, "w", encoding="utf-8") as f:
+    f.write(html_content)
+
+path
