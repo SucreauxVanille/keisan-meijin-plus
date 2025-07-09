@@ -100,6 +100,34 @@
     .red { filter: hue-rotate(0deg); }
     .blue { filter: hue-rotate(200deg); }
     .green { filter: hue-rotate(100deg); }
+
+/* タマゴ落下→バウンドアニメーション */
+@keyframes fallAndBounce {
+  0% {
+    transform: translateY(-300px);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+  75% {
+    transform: translateY(-20px);
+  }
+  85% {
+    transform: translateY(0px);
+  }
+  92% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.fall-and-bounce {
+  animation: fallAndBounce 1s ease-out;
+}  
   </style>
 </head>
 <body>
@@ -134,175 +162,8 @@
       <img id="dino" src="triceratops.png" class="creature-img red" alt="トリケラトプス">
     </div>
   </div>
-<script>
-// --- 乱数ユーティリティ ---
-function randInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function gcd(a, b) {
-  return b === 0 ? a : gcd(b, a % b);
-}
-
-function simplify(numer, denom) {
-  const g = gcd(numer, denom);
-  return [numer / g, denom / g];
-}
-
-// --- 表示関連 ---
-function toggleInput() {
-  const type = document.getElementById("answerType").value;
-  document.getElementById("answerFraction").style.display = type === "fraction" ? "inline-block" : "none";
-  document.getElementById("answerInteger").style.display = type === "integer" ? "inline-block" : "none";
-}
-
-// --- 問題生成 ---
-let currentNumer = 0;
-let currentDenom = 1;
-let streak = 0;
-let timerInterval;
-let elapsed = 0;
-let hintGiven = false;
-
-function generateOperand() {
-  const isFraction = Math.random() < 0.5;
-  if (isFraction) {
-    let denom = randInt(2, 12);
-    let numer = randInt(1, denom - 1);
-    return { n: numer, d: denom, str: makeFractionHTML(numer, denom), val: numer / denom };
-  } else {
-    const value = randInt(1, 20);
-    return { n: value, d: 1, str: `<span class='natural'>${value}</span>`, val: value };
-  }
-}
-
-function makeFractionHTML(n, d) {
-  return `<span class='fraction'><span class='top'>${n}</span><span class='bottom'>${d}</span></span>`;
-}
-
-function generateQuestion() {
-  let a, b, c, op1, op2, expr, val;
-  const ops = ["+", "-", "*", "/"];
-
-  while (true) {
-    a = generateOperand();
-    b = generateOperand();
-    c = generateOperand();
-    op1 = ops[randInt(0, 3)];
-    op2 = ops[randInt(0, 3)];
-
-    // 括弧を明示する
-    expr = `(${a.val} ${op1} ${b.val}) ${op2} ${c.val}`;
-    try {
-      val = eval(expr);
-    } catch {
-      continue;
-    }
-    if (!isFinite(val) || val < 0 || val > 60) continue;
-
-    const [n, d] = simplify(Math.round(val * 1000000), 1000000);
-    currentNumer = n;
-    currentDenom = d;
-
-    document.getElementById("question").innerHTML = `問題：(${a.str} ${op1} ${b.str}) ${op2} ${c.str}`;
-    document.getElementById("result").innerText = "";
-    document.getElementById("message").innerText = "";
-    document.getElementById("eggImage").style.display = "none";
-    document.getElementById("dino").style.display = "none";
-    document.getElementById("description").innerText = streak >= 5 ? "連続正解でタマゴを育てよう！" : "計算用紙を用意して取り組もう！";
-
-    startTimer();
-    break;
-  }
-}
-
-// --- タイマー制御 ---
-function startTimer() {
-  clearInterval(timerInterval);
-  elapsed = 0;
-  hintGiven = false;
-  document.getElementById("timer").innerText = `経過時間: 0秒（目安: ${currentDenom === 1 ? 20 : 40}秒）`;
-  timerInterval = setInterval(() => {
-    elapsed++;
-    document.getElementById("timer").innerText = `経過時間: ${elapsed}秒（目安: ${currentDenom === 1 ? 20 : 40}秒）`;
-    if (!hintGiven && elapsed >= (currentDenom === 1 ? 20 : 40)) {
-      document.getElementById("message").innerText = `${elapsed}秒経過！答えよう！`;
-      hintGiven = true;
-    }
-  }, 1000);
-}
-
-// --- 正誤判定 ---
-function checkAnswer() {
-  clearInterval(timerInterval);
-  const type = document.getElementById("answerType").value;
-  let isCorrect = false;
-  if (type === "fraction") {
-    const n = parseInt(document.getElementById("numerator").value);
-    const d = parseInt(document.getElementById("denominator").value);
-    if (d !== 0) {
-      const [sn, sd] = simplify(n, d);
-      const [cn, cd] = simplify(currentNumer, currentDenom);
-      isCorrect = sn === cn && sd === cd;
-    }
-  } else {
-    const user = parseInt(document.getElementById("integerAnswer").value);
-    isCorrect = currentDenom === 1 && user === currentNumer;
-  }
-  
-  if (isCorrect) {
-    streak++;
-    document.getElementById("result").innerText = "⭕ 正解！";
-    updateProgress();
-    setTimeout(generateQuestion, 1000);
-  } else {
-    streak = 0;
-    const [sn, sd] = simplify(currentNumer, currentDenom);
-    document.getElementById("result").innerText = `❌ 不正解。正答: ${sd === 1 ? sn : `${sn}/${sd}`}`;
-    const btn = document.createElement("button");
-    btn.innerText = "次へ";
-    btn.onclick = generateQuestion;
-    document.getElementById("result").appendChild(btn);
-  }
-  document.getElementById("streak").innerText = `連続正解数: ${streak}`;
-}
-
-// --- トリケラトプス育成ロジック ---
-function updateProgress() {
-  const egg = document.getElementById("eggImage");
-  const dino = document.getElementById("dino");
-  if (streak === 5) {
-    egg.src = "egg1.png";
-    egg.style.display = "block";
-    document.getElementById("message").innerText = "おや？何かのタマゴを見つけた！";
-  } else if (streak === 10) {
-    const rare = Math.random() < 0.5;
-    if (rare) {
-      egg.src = "egg2.png";
-      document.getElementById("message").innerText = "タマゴが割れそう！何か生まれるかも！";
-    } else {
-      egg.src = "hajiki.png";
-      document.getElementById("message").innerText = "よく見たらタマゴじゃなかった…";
-    }
-    egg.style.display = "block";
-  } else if (streak === 15) {
-    if (egg.src.includes("egg2")) {
-      const colors = ["red", "blue", "green"];
-      const color = colors[randInt(0, 2)];
-      dino.className = `creature-img ${color}`;
-      dino.style.display = "block";
-      document.getElementById("message").innerText = `タマゴから${color}トリケラトプスが生まれた！`;
-    } else if (egg.src.includes("hajiki")) {
-      document.getElementById("message").innerText = "そういえば、本当にタマゴがゲットできることもあるみたいだよ。";
-    }
-  }
-}
-
-window.onload = () => {
-  toggleInput();
-  generateQuestion();
-};
-</script>
-
+  <script src="main.js"></script>
+  <script src="triceratops.js"></script>
 </body>
 </html>
+
