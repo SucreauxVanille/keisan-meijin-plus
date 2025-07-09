@@ -74,24 +74,21 @@
       padding: 0.3em;
       margin-bottom: 1em;
     }
-  #question {
-    font-size: 1.5em;
-    line-height: 1.4em;
-  }
-
-  .fraction, .natural {
-    font-size: 1.5em;
-    line-height: 1.2em;
-  }
-
-  .fraction .top, .fraction .bottom {
-    padding: 0 6px;
-  }
-  #nextButton {
-    margin-top: 1em;
-    font-size: 1.2em;
-  }
-
+    #question {
+      font-size: 1.5em;
+      line-height: 1.4em;
+    }
+    .fraction, .natural {
+      font-size: 1.5em;
+      line-height: 1.2em;
+    }
+    .fraction .top, .fraction .bottom {
+      padding: 0 6px;
+    }
+    #nextButton {
+      margin-top: 1em;
+      font-size: 1.2em;
+    }
     #description {
       font-size: 1.2em;
       margin-bottom: 1em;
@@ -104,43 +101,52 @@
     #egg-container, #dino-container {
       margin-top: 2em;
     }
-    .creature-img {
+    #egg-container {
+      display: flex;
+      justify-content: center;
+    }
+    #eggImage {
       width: 120px;
-      transition: filter 0.3s ease;
+      display: none;
+    }
+    #dino {
+      width: 120px;
       display: none;
       margin: 10px auto;
+    }
+    .creature-img {
+      transition: filter 0.3s ease;
     }
     .red { filter: hue-rotate(0deg); }
     .blue { filter: hue-rotate(200deg); }
     .green { filter: hue-rotate(100deg); }
 
-/* タマゴ落下→バウンドアニメーション */
-@keyframes fallAndBounce {
-  0% {
-    transform: translateY(-300px);
-    opacity: 0;
-  }
-  60% {
-    transform: translateY(0px);
-    opacity: 1;
-  }
-  75% {
-    transform: translateY(-20px);
-  }
-  85% {
-    transform: translateY(0px);
-  }
-  92% {
-    transform: translateY(-10px);
-  }
-  100% {
-    transform: translateY(0px);
-  }
-}
+    @keyframes fallAndBounce {
+      0% {
+        transform: translateY(-300px);
+        opacity: 0;
+      }
+      60% {
+        transform: translateY(0px);
+        opacity: 1;
+      }
+      75% {
+        transform: translateY(-20px);
+      }
+      85% {
+        transform: translateY(0px);
+      }
+      92% {
+        transform: translateY(-10px);
+      }
+      100% {
+        transform: translateY(0px);
+      }
+    }
 
-.fall-and-bounce {
-  animation: fallAndBounce 1s ease-out;
-}  
+    .fall-and-bounce {
+      animation: fallAndBounce 1s ease-out;
+    }
   </style>
 </head>
 <body>
@@ -171,14 +177,13 @@
     <div id="timer"></div>
     <div id="message"></div>
     <div id="egg-container">
-      <img id="eggImage" class="creature-img" src="" alt="たまご表示">
+      <img id="eggImage" src="" alt="たまご表示">
     </div>
     <div id="dino-container">
-      <img id="dino" src="triceratops.png" class="creature-img red" alt="トリケラトプス">
+      <img id="dino" src="triceratops.png" class="red" alt="トリケラトプス">
     </div>
   </div>
-<script src="triceratops.js" defer></script>
-<script src="main.js" defer></script>
-
+  <script src="triceratops.js" defer></script>
+  <script src="main.js" defer></script>
 </body>
 </html>
