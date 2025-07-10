@@ -1,3 +1,5 @@
+// ここに最新の triceratops.js コードを貼り付けてください。
+// そこから変更を加えていきます。
 function handleCreatureProgress(streak) {
   const description = document.getElementById("description");
   const eggImage = document.getElementById("eggImage");
@@ -22,17 +24,16 @@ function handleCreatureProgress(streak) {
   if (streak === 3) {
     eggImage.src = "egg1.png";
     eggImage.style.display = "block";
-    description.textContent = "正解するとタマゴが育つかも？";
 
-    showMessageModal("おや？");
-
-    setTimeout(() => {
+    showMessageModal("おや？", () => {
       eggImage.classList.add("fall-and-bounce");
       setTimeout(() => {
-        showMessageModal("何かのタマゴを見つけた！");
+        showMessageModal("何かのタマゴを見つけた！", () => {
+          showMessageModal("正解してタマゴを育てよう！");
+        });
         eggImage.classList.add("idle-bounce");
       }, 2000);
-    }, 600);
+    });
 
   } else if (streak === 5) {
     const rand = Math.random();
@@ -47,14 +48,19 @@ function handleCreatureProgress(streak) {
     eggImage.src = character + ".png";
     eggImage.style.display = "block";
     eggImage.classList.add("center-pulse");
-    description.textContent = "タマゴが育ってるみたい！";
 
     if (character === "egg2") {
-      showMessageModal("タマゴが割れそう！何か生まれるかも！");
+      showMessageModal("タマゴが割れそう！何か生まれるかも！", () => {
+        showMessageModal("正解してタマゴをかえそう！");
+      });
     } else if (character === "hajiki") {
-      showMessageModal("よく見たらタマゴじゃなくてはじき丸くんだった…");
+      showMessageModal("よく見たらタマゴじゃなくてはじき丸くんだった…", () => {
+        showMessageModal("はじき丸くんと一緒に頑張ろう！");
+      });
     } else {
-      showMessageModal("よく見たらタマゴじゃなくてカエルだった…");
+      showMessageModal("よく見たらタマゴじゃなくてカエルだった…", () => {
+        showMessageModal("カエルと一緒に頑張ろう！");
+      });
     }
     eggImage.classList.add("idle-sway");
 
@@ -68,7 +74,6 @@ function handleCreatureProgress(streak) {
     }
     eggImage.style.display = "block";
     eggImage.classList.add("idle-sway");
-    description.textContent = "タマゴが育ってるみたい！";
 
   } else if (streak === 10) {
     if (eggImage.src.includes("egg2")) {
@@ -77,19 +82,20 @@ function handleCreatureProgress(streak) {
 
       if (choice === "brachio") {
         dino.src = "brachio.png";
-        showMessageModal("タマゴからブラキオサウルスが生まれた！");
-        description.textContent = "ブラキオサウルスと一緒にまた頑張ろう！";
+        showMessageModal("タマゴからブラキオサウルスが生まれた！", () => {
+          showMessageModal("ブラキオサウルスと一緒に頑張ろう！");
+        });
       } else {
         dino.src = "triceratops.png";
         dino.className = "creature-img " + choice;
-        showMessageModal(`タマゴから${colorName(choice)}トリケラトプスが生まれた！`);
-        description.textContent = "トリケラトプスと一緒にまた頑張ろう！";
+        showMessageModal(`タマゴから${colorName(choice)}トリケラトプスが生まれた！`, () => {
+          showMessageModal("トリケラトプスはあなたをママだと思ってるみたい");
+        });
       }
       dino.style.display = "block";
       dino.classList.add("idle-bounce");
     } else {
       showMessageModal("そういえば、本当にタマゴがゲットできることもあるみたいだよ");
-      description.textContent = "トリケラトプスとブラキオサウルスと一緒にまた頑張ろう！";
     }
     eggImage.style.display = "none";
   }
@@ -104,13 +110,23 @@ function colorName(colorClass) {
   }
 }
 
-function showMessageModal(text) {
+function showMessageModal(text, nextCallback) {
   const modal = document.getElementById("messageModal");
   const modalText = document.getElementById("modalText");
   modalText.textContent = text;
   modal.style.display = "block";
+  modal.onclick = () => {
+    if (nextCallback) {
+      modal.onclick = () => closeMessageModal();
+      nextCallback();
+    } else {
+      closeMessageModal();
+    }
+  };
 }
 
 function closeMessageModal() {
-  document.getElementById("messageModal").style.display = "none";
+  const modal = document.getElementById("messageModal");
+  modal.style.display = "none";
+  modal.onclick = null;
 }
