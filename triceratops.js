@@ -4,7 +4,7 @@ function handleCreatureProgress(streak) {
   const dino = document.getElementById("dino");
 
   // 初期化
-  eggImage.classList.remove("fall-and-bounce");
+  eggImage.classList.remove("fall-and-bounce", "center-pulse");
   dino.style.display = "none";
   closeMessageModal();
   description.textContent = "計算用紙を用意して取り組もう！";
@@ -33,30 +33,42 @@ function handleCreatureProgress(streak) {
 
       setTimeout(() => {
         showMessageModal("何かのタマゴを見つけた！");
-      }, 2000); // アニメーション完了後にメッセージ変更
+      }, 2000);
 
-    }, 600); // 最初のメッセージを少し表示してからアニメーション開始
+    }, 600);
 
   } else if (streak === 5) {
-    if (Math.random() < 0.5) {
-      eggImage.src = "egg2.png";
-      showMessageModal("タマゴが割れそう！何か生まれるかも！");
-    } else {
-      eggImage.src = "hajiki.png";
-      showMessageModal("よく見たらタマゴじゃなかった…");
+    const rand = Math.random();
+    let character = "egg2";
+
+    if (rand < 0.33) {
+      character = "hajiki";
+    } else if (rand < 0.66) {
+      character = "frog";
     }
+
+    eggImage.src = character + ".png";
     eggImage.style.display = "block";
+    eggImage.classList.add("center-pulse");
     description.textContent = "タマゴの変化に注目だ！";
 
+    if (character === "egg2") {
+      showMessageModal("タマゴが割れそう！何か生まれるかも！");
+    } else if (character === "hajiki") {
+      showMessageModal("よく見たらタマゴじゃなくてはじき丸くんだった…");
+    } else {
+      showMessageModal("よく見たらタマゴじゃなくてカエルだった…");
+    }
   } else if (streak > 5 && streak < 10) {
     if (eggImage.src.includes("egg2")) {
       showMessageModal("タマゴの中身も喜んでるよ！");
     } else if (eggImage.src.includes("hajiki")) {
       showMessageModal("はじき丸くんも応援しているよ！");
+    } else if (eggImage.src.includes("frog")) {
+      showMessageModal("カエルも応援しているよ！");
     }
     eggImage.style.display = "block";
     description.textContent = "タマゴの変化に注目だ！";
-
   } else if (streak === 10) {
     if (eggImage.src.includes("egg2")) {
       const variants = ["red", "blue", "green", "brachio"];
