@@ -4,19 +4,28 @@ function handleCreatureProgress(streak) {
   const dino = document.getElementById("dino");
 
   // 初期化
-  // アニメーションリセットのみ実行、画像の非表示は不要
   eggImage.classList.remove("fall-and-bounce");
-  dino.style.display = "none";  // 孵化時以外は消すのが適切
-
+  dino.style.display = "none";
   closeMessageModal();
   description.textContent = "計算用紙を用意して取り組もう！";
 
   if (streak === 3) {
     eggImage.src = "egg1.png";
     eggImage.style.display = "block";
-    eggImage.classList.add("fall-and-bounce"); // アニメーションクラス付与
     description.textContent = "連続正解でタマゴを育てよう！";
-    showMessageModal("おや？何かのタマゴを見つけた！");
+
+    // ステップ①「おや？」表示
+    showMessageModal("おや？");
+
+    // ステップ② アニメーション → ステップ③メッセージ表示
+    setTimeout(() => {
+      eggImage.classList.add("fall-and-bounce");
+
+      setTimeout(() => {
+        showMessageModal("何かのタマゴを見つけた！");
+      }, 2000); // アニメーション完了後にメッセージ変更
+
+    }, 600); // 最初のメッセージを少し表示してからアニメーション開始
 
   } else if (streak === 5) {
     if (Math.random() < 0.5) {
@@ -78,4 +87,4 @@ function showMessageModal(text) {
 
 function closeMessageModal() {
   document.getElementById("messageModal").style.display = "none";
-} 
+}
