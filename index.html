@@ -78,10 +78,6 @@
       font-size: 1.5em;
       line-height: 1.4em;
     }
-    .fraction, .natural {
-      font-size: 1.5em;
-      line-height: 1.2em;
-    }
     .fraction .top, .fraction .bottom {
       padding: 0 6px;
     }
@@ -100,19 +96,12 @@
     }
     #egg-container, #dino-container {
       margin-top: 2em;
-    }
-    #egg-container {
       display: flex;
       justify-content: center;
     }
-    #eggImage {
+    #eggImage, #dino {
       width: 120px;
       display: none;
-    }
-    #dino {
-      width: 120px;
-      display: none;
-      margin: 10px auto;
     }
     .creature-img {
       transition: filter 0.3s ease;
@@ -121,106 +110,60 @@
     .blue { filter: hue-rotate(200deg); }
     .green { filter: hue-rotate(100deg); }
 
-/* タマゴ落下→バウンドアニメーション（2秒に延長） */
-@keyframes fallAndBounce {
-  0% {
-    transform: translateY(-1500px); /* 画面外上から登場 */
-    opacity: 0;
-  }
-  60% {
-    transform: translateY(0px);
-    opacity: 1;
-  }
-  75% {
-    transform: translateY(-20px);
-  }
-  85% {
-    transform: translateY(0px);
-  }
-  92% {
-    transform: translateY(-10px);
-  }
-  100% {
-    transform: translateY(0px);
-  }
-}
+    @keyframes fallAndBounce {
+      0% { transform: translateY(-1500px); opacity: 0; }
+      60% { transform: translateY(0); opacity: 1; }
+      75% { transform: translateY(-20px); }
+      85% { transform: translateY(0); }
+      92% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    }
+    .fall-and-bounce {
+      animation: fallAndBounce 2s ease-out;
+    }
 
-.fall-and-bounce {
-  animation: fallAndBounce 2s ease-out;
-}
+    @keyframes centerPulse {
+      0% { transform: translateY(-150px) scale(1.2); opacity: 0.5; }
+      50% { transform: translateY(0) scale(1); opacity: 1; }
+      100% { transform: translateY(0) scale(1); }
+    }
+    .center-pulse {
+      animation: centerPulse 1.2s ease-out;
+    }
 
-  @keyframes centerPulse {
-  0% {
-    transform: translateY(-150px) scale(1.2);
-    opacity: 0.5;
-  }
-  50% {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(0) scale(1);
-  }
-}
+    @keyframes idleBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .idle-bounce {
+      animation: idleBounce 2s ease-in-out infinite;
+    }
 
-.center-pulse {
-  animation: centerPulse 1.2s ease-out;
-}
-@keyframes idleBounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-@keyframes idleSway {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(2deg); }
-  75% { transform: rotate(-2deg); }
-}
-.idle-bounce {
-  animation: idleBounce 2s ease-in-out infinite;
-}
-.idle-sway {
-  animation: idleSway 3s ease-in-out infinite;
-}
+    @keyframes idleSway {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(2deg); }
+      75% { transform: rotate(-2deg); }
+    }
+    .idle-sway {
+      animation: idleSway 3s ease-in-out infinite;
+    }
 
-/* メッセージモーダルのスタイル */
-#messageModal {
-  display: none;
-  position: fixed;
-  top: 30%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #ffffdd;
-  border: 2px solid #333;
-  border-radius: 12px;
-  padding: 1.5em 2em;
-  font-size: 1.5em;
-  font-weight: bold;
-  z-index: 1000;
-  box-shadow: 0 0 10px rgba(0,0,0,0.4);
-  cursor: pointer;
-}
-
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1000;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-.modal-content {
-  background-color: #fff;
-  margin: 20% auto;
-  padding: 1.5em;
-  border-radius: 12px;
-  max-width: 80%;
-  text-align: center;
-  font-size: 1.2em;
-  font-weight: bold;
-  box-shadow: 0 0 12px #000;
-}
-
+    #messageModal {
+      display: none;
+      position: fixed;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #ffffdd;
+      border: 2px solid #333;
+      border-radius: 12px;
+      padding: 1.5em 2em;
+      font-size: 1.5em;
+      font-weight: bold;
+      z-index: 1000;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -246,42 +189,22 @@
     <button onclick="checkAnswer()">答え合わせ</button>
     <div id="result"></div>
     <button id="nextButton" style="display:none;" onclick="nextQuestion()">次へ</button>
-
     <div id="streak">連続正解数: 0</div>
     <div id="timer"></div>
     <div id="message"></div>
     <div id="egg-container">
-      <img id="eggImage" src="" alt="たまご表示">
+      <img id="eggImage" class="creature-img" src="" alt="たまご表示">
     </div>
     <div id="dino-container">
-      <img id="dino" src="triceratops.png" class="red" alt="トリケラトプス">
+      <img id="dino" class="creature-img" src="" alt="恐竜表示">
     </div>
   </div>
-<!-- メッセージ用モーダル -->
-<div id="messageModal" style="
-  display: none;
-  position: fixed;
-  top: 30%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  border: 3px solid #333;
-  padding: 1.5em;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.5);
-  font-size: 1.4em;
-  font-weight: bold;
-  z-index: 1000;
-  cursor: pointer;
-" onclick="closeMessageModal()">
-  <span id="modalText"></span>
-</div>
-<div id="messageModal" onclick="closeMessageModal()">
-  <span id="modalText"></span>
-</div>
+
+  <div id="messageModal" onclick="closeMessageModal()">
+    <span id="modalText"></span>
+  </div>
 
   <script src="triceratops.js" defer></script>
   <script src="main.js" defer></script>
-
 </body>
 </html>
