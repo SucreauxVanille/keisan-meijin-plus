@@ -23,7 +23,7 @@
       vertical-align: middle;
       text-align: center;
       margin: 0 5px;
-      font-size: 1.8em;
+      font-size: 1.5em;
       line-height: 1.2em;
     }
     .fraction .top {
@@ -44,21 +44,21 @@
     .fraction-input input {
       display: block;
       width: 60px;
-      font-size: 1.5em;
+      font-size: 1.2em;
       margin: 5px auto;
       text-align: center;
     }
     input[type="number"] {
-      font-size: 1.5em;
-      padding: 0.6em;
+      font-size: 1.2em;
+      padding: 0.5em;
       width: 100px;
-      margin: 0.6em auto;
+      margin: 0.5em auto;
       text-align: center;
       display: block;
     }
     button {
-      font-size: 1.5em;
-      padding: 0.6em 1.2em;
+      font-size: 1.2em;
+      padding: 0.5em 1em;
       margin: 1em;
       background-color: #4CAF50;
       color: white;
@@ -74,21 +74,19 @@
       cursor: not-allowed;
     }
     select {
-      font-size: 1.2em;
+      font-size: 1em;
       padding: 0.3em;
       margin-right: 1em;
     }
     #question {
       font-size: 1.2em;
       line-height: 1.3em;
-      margin-bottom: 0.5em;
-      word-break: break-word;
     }
     .fraction .top, .fraction .bottom {
       padding: 0 6px;
     }
     #description {
-      font-size: 1.2em;
+      font-size: 1em;
       margin-bottom: 1em;
     }
     #result, #streak, #message, #timer {
@@ -100,6 +98,7 @@
       margin-top: 2em;
       display: flex;
       justify-content: center;
+      position: relative;
     }
     #eggImage, #dino {
       width: 120px;
@@ -107,6 +106,14 @@
     }
     .creature-img {
       transition: filter 0.3s ease;
+      z-index: 0;
+    }
+    .creature-img.front {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
     }
     .red { filter: hue-rotate(0deg); }
     .blue { filter: hue-rotate(200deg); }
@@ -174,7 +181,7 @@
       background: #ffffdd;
       border: 2px solid #333;
       border-radius: 12px;
-      padding: 1em 1.5em;
+      padding: 1.2em 1.5em;
       font-size: 1.2em;
       font-weight: bold;
       z-index: 1000;
@@ -184,20 +191,18 @@
     }
 
     @media screen and (max-width: 480px) {
-      #question, #timer, #streak, #result {
-        font-size: 1em;
-      }
-      .fraction-input input {
-        width: 50px;
-        font-size: 1.2em;
-      }
       button {
-        font-size: 1.2em;
-        padding: 0.5em 1em;
-      }
-      #messageModal {
         font-size: 1em;
-        padding: 0.8em 1em;
+        padding: 0.5em 0.8em;
+      }
+      select {
+        font-size: 0.9em;
+      }
+      #question {
+        font-size: 1em;
+      }
+      #result, #streak, #timer {
+        font-size: 1em;
       }
     }
   </style>
@@ -215,7 +220,7 @@
       </select>
       <div id="answerFraction" class="fraction-input">
         <input type="number" id="numerator" placeholder="分子">
-        <div style="font-size: 1.5em; line-height: 0.5em;">―</div>
+        <div style="font-size: 1.2em; line-height: 0.5em;">―</div>
         <input type="number" id="denominator" placeholder="分母">
       </div>
       <div id="answerInteger" class="fraction-input" style="display:none;">
