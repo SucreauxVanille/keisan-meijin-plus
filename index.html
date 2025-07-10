@@ -69,10 +69,14 @@
     button:hover {
       background-color: #45a049;
     }
+    button:disabled {
+      background-color: #888;
+      cursor: not-allowed;
+    }
     select {
       font-size: 1.2em;
       padding: 0.3em;
-      margin-bottom: 1em;
+      margin-right: 1em;
     }
     #question {
       font-size: 1.5em;
@@ -80,10 +84,6 @@
     }
     .fraction .top, .fraction .bottom {
       padding: 0 6px;
-    }
-    #nextButton {
-      margin-top: 1em;
-      font-size: 1.2em;
     }
     #description {
       font-size: 1.2em;
@@ -109,6 +109,21 @@
     .red { filter: hue-rotate(0deg); }
     .blue { filter: hue-rotate(200deg); }
     .green { filter: hue-rotate(100deg); }
+
+    .input-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1em;
+      flex-wrap: wrap;
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: center;
+      gap: 1.5em;
+      flex-wrap: wrap;
+    }
 
     @keyframes fallAndBounce {
       0% { transform: translateY(-1500px); opacity: 0; }
@@ -171,24 +186,26 @@
     <h1>計算名人君プラス</h1>
     <p id="description">計算用紙を用意して取り組もう！</p>
     <div id="question">問題を読み込み中...</div>
-    <div>
+    <div class="input-row">
       <label for="answerType">答えの形式：</label>
       <select id="answerType" onchange="toggleInput()">
         <option value="fraction">分数</option>
         <option value="integer">整数</option>
       </select>
+      <div id="answerFraction" class="fraction-input">
+        <input type="number" id="numerator" placeholder="分子">
+        <div style="font-size: 1.5em; line-height: 0.5em;">―</div>
+        <input type="number" id="denominator" placeholder="分母">
+      </div>
+      <div id="answerInteger" class="fraction-input" style="display:none;">
+        <input type="number" id="integerAnswer" placeholder="整数で入力">
+      </div>
     </div>
-    <div id="answerFraction" class="fraction-input">
-      <input type="number" id="numerator" placeholder="分子">
-      <div style="font-size: 1.5em; line-height: 0.5em;">―</div>
-      <input type="number" id="denominator" placeholder="分母">
+    <div class="button-row">
+      <button onclick="checkAnswer()">答え合わせ</button>
+      <button id="nextButton" disabled onclick="nextQuestion()">次へ</button>
     </div>
-    <div id="answerInteger" class="fraction-input" style="display:none;">
-      <input type="number" id="integerAnswer" placeholder="整数で入力">
-    </div>
-    <button onclick="checkAnswer()">答え合わせ</button>
     <div id="result"></div>
-    <button id="nextButton" style="display:none;" onclick="nextQuestion()">次へ</button>
     <div id="streak">連続正解数: 0</div>
     <div id="timer"></div>
     <div id="message"></div>
