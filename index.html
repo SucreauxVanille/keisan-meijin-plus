@@ -121,9 +121,10 @@
     .blue { filter: hue-rotate(200deg); }
     .green { filter: hue-rotate(100deg); }
 
+/* タマゴ落下→バウンドアニメーション（2秒に延長） */
 @keyframes fallAndBounce {
   0% {
-    transform: translateY(-1000px); /* ← ここを大きくする */
+    transform: translateY(-500px); /* 画面外上から登場 */
     opacity: 0;
   }
   60% {
@@ -144,9 +145,28 @@
   }
 }
 
-    .fall-and-bounce {
-      animation: fallAndBounce 1s ease-out;
-    }
+.fall-and-bounce {
+  animation: fallAndBounce 2s ease-out;
+}
+
+/* メッセージモーダルのスタイル */
+#messageModal {
+  display: none;
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ffffdd;
+  border: 2px solid #333;
+  border-radius: 12px;
+  padding: 1.5em 2em;
+  font-size: 1.5em;
+  font-weight: bold;
+  z-index: 1000;
+  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+  cursor: pointer;
+}
+
 .modal {
   display: none;
   position: fixed;
@@ -223,11 +243,12 @@
 " onclick="closeMessageModal()">
   <span id="modalText"></span>
 </div>
+<div id="messageModal" onclick="closeMessageModal()">
+  <span id="modalText"></span>
+</div>
 
   <script src="triceratops.js" defer></script>
   <script src="main.js" defer></script>
-
-</div>
 
 </body>
 </html>
