@@ -141,7 +141,7 @@ function checkAnswer() {
     document.getElementById("result").textContent = "⭕ 正解！";
   } else {
     streak = 0;
-    document.getElementById("result").textContent = `❌ 不正解。正答: ${currentAnswer.numerator}/${currentAnswer.denominator}`;
+    document.getElementById("result").textContent = `❌ 不正解。正しくは: ${currentAnswer.numerator}/${currentAnswer.denominator}`;
   }
 
   document.getElementById("streak").textContent = `連続正解数: ${streak}`;
