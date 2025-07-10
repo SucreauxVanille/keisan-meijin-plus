@@ -9,6 +9,16 @@ function handleCreatureProgress(streak) {
   closeMessageModal();
   description.textContent = "計算用紙を用意して取り組もう！";
 
+  // ✅ streak が 0 のとき：画像類を非表示にして終了
+  if (streak === 0) {
+    eggImage.style.display = "none";
+    dino.style.display = "none";
+    eggImage.src = "";
+    dino.src = "";
+    dino.className = "creature-img";
+    return;
+  }
+
   if (streak === 3) {
     eggImage.src = "egg1.png";
     eggImage.style.display = "block";
