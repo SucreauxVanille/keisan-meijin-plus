@@ -1,5 +1,3 @@
-// ここに最新の triceratops.js コードを貼り付けてください。
-// そこから変更を加えていきます。
 function handleCreatureProgress(streak) {
   const description = document.getElementById("description");
   const eggImage = document.getElementById("eggImage");
@@ -98,6 +96,11 @@ function handleCreatureProgress(streak) {
       showMessageModal("そういえば、本当にタマゴがゲットできることもあるみたいだよ");
     }
     eggImage.style.display = "none";
+
+  } else if (streak > 10) {
+    if (dino.style.display !== "none" && dino.src.includes("triceratops")) {
+      showMessageModal("ママが正解してトリケラトプスも嬉しそう！");
+    }
   }
 }
 
@@ -123,6 +126,12 @@ function showMessageModal(text, nextCallback) {
       closeMessageModal();
     }
   };
+}
+
+function closeMessageModal() {
+  const modal = document.getElementById("messageModal");
+  modal.style.display = "none";
+  modal.onclick = null;
 }
 
 function closeMessageModal() {
