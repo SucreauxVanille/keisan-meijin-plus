@@ -4,7 +4,7 @@ function handleCreatureProgress(streak) {
   const dino = document.getElementById("dino");
 
   // 初期化（ただしstreakが10以上ならdinoは消さない）
-  eggImage.classList.remove("fall-and-bounce", "center-pulse", "idle-bounce", "idle-sway");
+  eggImage.classList.remove("fall-and-bounce", "center-pulse", "idle-bounce", "idle-sway", "front");
   if (streak < 10) dino.style.display = "none";
   closeMessageModal();
   description.textContent = "計算用紙を用意して取り組もう！";
@@ -45,7 +45,12 @@ function handleCreatureProgress(streak) {
 
     eggImage.src = character + ".png";
     eggImage.style.display = "block";
-    eggImage.classList.add("center-pulse");
+    eggImage.classList.add("center-pulse", "front");
+
+    // 3秒後にfrontクラスを外す
+    setTimeout(() => {
+      eggImage.classList.remove("front");
+    }, 3000);
 
     if (character === "egg2") {
       showMessageModal("タマゴが割れそう！何か生まれるかも！", () => {
@@ -126,12 +131,6 @@ function showMessageModal(text, nextCallback) {
       closeMessageModal();
     }
   };
-}
-
-function closeMessageModal() {
-  const modal = document.getElementById("messageModal");
-  modal.style.display = "none";
-  modal.onclick = null;
 }
 
 function closeMessageModal() {
