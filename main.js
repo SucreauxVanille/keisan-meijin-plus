@@ -119,7 +119,7 @@ function checkAnswer() {
   clearInterval(timerInterval);
   const type = document.getElementById("answerType").value;
   let userAns;
-
+  document.getElementById("nextButton").disabled = false;
   if (type === "integer") {
     const val = parseInt(document.getElementById("integerAnswer").value);
     userAns = { numerator: val, denominator: 1 };
