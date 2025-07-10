@@ -4,9 +4,10 @@ function handleCreatureProgress(streak) {
   const dino = document.getElementById("dino");
 
   // 初期化
-  eggImage.style.display = "none";
-  eggImage.className = ""; // アニメーションリセット
-  dino.style.display = "none";
+  // アニメーションリセットのみ実行、画像の非表示は不要
+  eggImage.classList.remove("fall-and-bounce");
+  dino.style.display = "none";  // 孵化時以外は消すのが適切
+
   closeMessageModal();
   description.textContent = "計算用紙を用意して取り組もう！";
 
