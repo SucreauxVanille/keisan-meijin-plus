@@ -109,9 +109,10 @@
       z-index: 0;
     }
     .creature-img.front {
-      position: absolute;
+      position: fixed;
+      top: 50%;
       left: 50%;
-      transform: translate(-50%, -1000px);
+      transform: translate(-50%, -50%);
       z-index: 1000;
     }
     .red { filter: hue-rotate(0deg); }
@@ -146,9 +147,9 @@
     }
 
     @keyframes centerPulse {
-      0% { transform: translate(-50%, -1000px) scale(1.5); opacity: 0.5; }
-      50% { transform: translate(-50%, 0) scale(1); opacity: 1; }
-      100% { transform: translate(-50%, 0) scale(1); }
+      0% { transform: translate(-50%, -150%) scale(1.5); opacity: 0.5; }
+      50% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(1); }
     }
     .center-pulse {
       animation: centerPulse 2.5s ease-out;
@@ -180,8 +181,8 @@
       background: #ffffdd;
       border: 2px solid #333;
       border-radius: 12px;
-      padding: 1em 1.2em;
-      font-size: 1.05em;
+      padding: 0.8em 1em;
+      font-size: 0.95em;
       font-weight: bold;
       z-index: 1000;
       box-shadow: 0 0 10px rgba(0,0,0,0.4);
