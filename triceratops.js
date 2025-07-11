@@ -20,10 +20,9 @@ function handleCreatureProgress(streak) {
   }
 
   if (streak === 3) {
-    eggImage.src = "egg1.png";
-    eggImage.style.display = "block";
-
     showMessageModal("おや？", () => {
+      eggImage.src = "egg1.png";
+      eggImage.style.display = "block";
       eggImage.classList.add("fall-and-bounce");
       setTimeout(() => {
         showMessageModal("何かのタマゴを見つけた！", () => {
