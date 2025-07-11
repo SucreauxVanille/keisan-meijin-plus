@@ -43,15 +43,15 @@
     }
     .fraction-input input {
       display: block;
-      width: 60px;
-      font-size: 1.2em;
+      width: 50px;
+      font-size: 1.1em;
       margin: 5px auto;
       text-align: center;
     }
     input[type="number"] {
-      font-size: 1.2em;
+      font-size: 1.1em;
       padding: 0.5em;
-      width: 100px;
+      width: 80px;
       margin: 0.5em auto;
       text-align: center;
       display: block;
@@ -111,7 +111,7 @@
     .creature-img.front {
       position: absolute;
       left: 50%;
-      transform: translate(-50%, -400px);
+      transform: translate(-50%, -1000px);
       z-index: 1000;
     }
     .red { filter: hue-rotate(0deg); }
@@ -146,7 +146,7 @@
     }
 
     @keyframes centerPulse {
-      0% { transform: translate(-50%, -400px) scale(1.5); opacity: 0.5; }
+      0% { transform: translate(-50%, -1000px) scale(1.5); opacity: 0.5; }
       50% { transform: translate(-50%, 0) scale(1); opacity: 1; }
       100% { transform: translate(-50%, 0) scale(1); }
     }
@@ -180,8 +180,8 @@
       background: #ffffdd;
       border: 2px solid #333;
       border-radius: 12px;
-      padding: 1.2em 1.5em;
-      font-size: 1.2em;
+      padding: 1em 1.2em;
+      font-size: 1.05em;
       font-weight: bold;
       z-index: 1000;
       box-shadow: 0 0 10px rgba(0,0,0,0.4);
@@ -212,7 +212,7 @@
     <p id="description">計算用紙を用意して取り組もう！</p>
     <div id="question">問題を読み込み中...</div>
     <div class="input-row">
-      <label for="answerType">答えの形式：</label>
+      <label for="answerType">答え方：</label>
       <select id="answerType" onchange="toggleInput()">
         <option value="fraction">分数</option>
         <option value="integer">整数</option>
