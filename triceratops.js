@@ -102,8 +102,18 @@ function handleCreatureProgress(streak) {
     }
     eggImage.style.display = "none";
 
-  } else if (streak > 10) {
+  } else if (streak === 15) {
     if (dino.style.display !== "none" && dino.src.includes("triceratops")) {
+      const colorClass = [...dino.classList].find(cls => ["red", "blue", "green"].includes(cls));
+      if (colorClass) {
+        dino.src = `triceratops2.png`;
+        dino.classList.add("idle-sway");
+        showMessageModal("おめでとう！トリケラトプスが成長したよ！");
+      }
+    }
+
+  } else if (streak > 15) {
+    if (dino.style.display !== "none" && dino.src.includes("triceratops2")) {
       showMessageModal("ママが正解してトリケラトプスも嬉しそう！");
     }
   }
