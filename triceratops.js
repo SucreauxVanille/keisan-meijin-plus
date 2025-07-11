@@ -117,6 +117,11 @@ function handleCreatureProgress(streak) {
       showMessageModal("ママが正解してトリケラトプスも嬉しそう！");
     }
   }
+
+  // 新たに追加：streak > 10 かつ triceratops 表示中
+  if (streak > 10 && dino.style.display !== "none" && dino.src.includes("triceratops")) {
+    showMessageModal("ママが正解してトリケラトプスも嬉しそう！");
+  }
 }
 
 function colorName(colorClass) {
