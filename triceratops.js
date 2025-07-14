@@ -9,7 +9,6 @@ function handleCreatureProgress(streak) {
   closeMessageModal();
   description.textContent = "計算用紙を用意して取り組もう！";
 
-  // streak === 0：完全リセット
   if (streak === 0) {
     eggImage.style.display = "none";
     dino.style.display = "none";
@@ -34,19 +33,20 @@ function handleCreatureProgress(streak) {
 
   } else if (streak === 5) {
     const rand = Math.random();
-    let character = "egg2";
+    let character;
 
-    if (rand < 0.33) {
+    if (rand < 0.2) {
       character = "hajiki";
-    } else if (rand < 0.66) {
+    } else if (rand < 0.4) {
       character = "frog";
+    } else {
+      character = "egg2";
     }
 
     eggImage.src = character + ".png";
     eggImage.style.display = "block";
     eggImage.classList.add("center-pulse", "front");
 
-    // 3秒後にfrontクラスを外す
     setTimeout(() => {
       eggImage.classList.remove("front");
     }, 3000);
@@ -79,8 +79,16 @@ function handleCreatureProgress(streak) {
 
   } else if (streak === 10) {
     if (eggImage.src.includes("egg2")) {
-      const variants = ["red", "blue", "green", "brachio"];
-      const choice = variants[Math.floor(Math.random() * variants.length)];
+      const variants = ["brachio", "red", "blue", "green", "yellow", "pink"];
+      const rand = Math.random();
+      let choice;
+
+      if (rand < 0.3) {
+        choice = "brachio";
+      } else {
+        const triceratopsColors = ["red", "blue", "green", "yellow", "pink"];
+        choice = triceratopsColors[Math.floor(Math.random() * triceratopsColors.length)];
+      }
 
       if (choice === "brachio") {
         dino.src = "brachio.png";
@@ -103,7 +111,7 @@ function handleCreatureProgress(streak) {
 
   } else if (streak === 15) {
     if (dino.style.display !== "none" && dino.src.includes("triceratops")) {
-      const colorClass = [...dino.classList].find(cls => ["red", "blue", "green"].includes(cls));
+      const colorClass = [...dino.classList].find(cls => ["red", "blue", "green", "yellow", "pink"].includes(cls));
       if (colorClass) {
         dino.src = `triceratops2.png`;
         dino.classList.add("idle-sway");
@@ -117,7 +125,6 @@ function handleCreatureProgress(streak) {
     }
   }
 
-  // 新たに追加：streak > 10 かつ triceratops 表示中
   if (streak > 10 && dino.style.display !== "none" && dino.src.includes("triceratops")) {
     showMessageModal("ママが正解してトリケラトプスも嬉しそう！");
   }
@@ -128,6 +135,8 @@ function colorName(colorClass) {
     case "red": return "赤";
     case "blue": return "青";
     case "green": return "緑";
+    case "yellow": return "黄色";
+    case "pink": return "ピンク";
     default: return "";
   }
 }
