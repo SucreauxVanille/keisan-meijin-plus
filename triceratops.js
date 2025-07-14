@@ -125,8 +125,8 @@ function handleCreatureProgress(streak) {
     }
   }
 
-  if (streak > 10 && dino.style.display !== "none" && dino.src.includes("triceratops")) {
-    showMessageModal("ママが正解してトリケラトプスも嬉しそう！");
+if (streak > 10 && streak !== 15 && dino.style.display !== "none" && dino.src.includes("triceratops")) {
+  showMessageModal("ママが正解してトリケラトプスも嬉しそう！");
   }
 }
 
