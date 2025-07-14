@@ -101,6 +101,10 @@ function handleCreatureProgress(streak) {
         showMessageModal(`タマゴから${colorName(choice)}トリケラトプスが生まれた！`, () => {
           showMessageModal("トリケラトプスはあなたをママだと思ってるみたい");
         });
+        dino.classList.add("center-pulse", "front");
+        setTimeout(() => {
+          dino.classList.remove("front");
+        }, 3000);
       }
       dino.style.display = "block";
       dino.classList.add("idle-bounce");
@@ -114,7 +118,10 @@ function handleCreatureProgress(streak) {
       const colorClass = [...dino.classList].find(cls => ["red", "blue", "green", "yellow", "pink"].includes(cls));
       if (colorClass) {
         dino.src = `triceratops2.png`;
-        dino.classList.add("idle-sway");
+        dino.classList.add("idle-sway", "center-pulse", "front");
+        setTimeout(() => {
+          dino.classList.remove("front");
+        }, 3000);
         showMessageModal("おめでとう！トリケラトプスが成長したよ！");
       }
     }
@@ -125,8 +132,8 @@ function handleCreatureProgress(streak) {
     }
   }
 
-if (streak > 10 && streak !== 15 && dino.style.display !== "none" && dino.src.includes("triceratops")) {
-  showMessageModal("ママが正解してトリケラトプスも嬉しそう！");
+  if (streak > 10 && streak !== 15 && dino.style.display !== "none" && dino.src.includes("triceratops")) {
+    showMessageModal("ママが正解してトリケラトプスも嬉しそう！");
   }
 }
 
