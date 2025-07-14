@@ -118,6 +118,8 @@
     .red { filter: hue-rotate(0deg); }
     .blue { filter: hue-rotate(200deg); }
     .green { filter: hue-rotate(100deg); }
+    .yellow { filter: hue-rotate(60deg) brightness(1.2) saturate(1.5); }
+    .pink { filter: hue-rotate(320deg) brightness(1.3) saturate(1.4); }
 
     .input-row {
       display: flex;
@@ -249,5 +251,13 @@
 
   <script src="triceratops.js" defer></script>
   <script src="main.js" defer></script>
+  <div style="display: flex; gap: 1em; justify-content: center; margin-top: 2em;">
+  <img src="triceratops.png" class="creature-img red" style="width: 80px;">
+  <img src="triceratops.png" class="creature-img blue" style="width: 80px;">
+  <img src="triceratops.png" class="creature-img green" style="width: 80px;">
+  <img src="triceratops.png" class="creature-img yellow" style="width: 80px;">
+  <img src="triceratops.png" class="creature-img pink" style="width: 80px;">
+</div>
+
 </body>
 </html>
