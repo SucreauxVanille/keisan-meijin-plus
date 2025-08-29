@@ -35,9 +35,9 @@ function handleCreatureProgress(streak) {
     const rand = Math.random();
     let character;
 
-    if (rand < 0.2) {
+    if (rand < 0.1) {
       character = "hajiki";
-    } else if (rand < 0.4) {
+    } else if (rand < 0.2) {
       character = "frog";
     } else {
       character = "egg2";
