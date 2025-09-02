@@ -60,7 +60,7 @@ function handleCreatureProgress() {
     showMessageModal(["おや？"]);
     const egg = document.getElementById("eggImage");
     egg.src = "egg1.png";
-    egg.className = "creature-img fall"; // 落下アニメーション
+    egg.className = "fall-and-bounce"; // 落下アニメーション
     return;
   }
 
