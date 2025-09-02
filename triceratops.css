@@ -129,6 +129,18 @@
       flex-wrap: wrap;
     }
 
+/* === Gecko Variants === */
+
+/* ハイイエロー（調整なし、元画像のまま） */
+.gecko-highyellow {
+  filter: none;
+}
+
+/* マックスノー（彩度を落としてモノクロ調） */
+.gecko-maxsnow {
+  filter: saturate(0%);
+}
+
     @keyframes fallAndBounce {
       0% { transform: translateY(-1500px); opacity: 0; }
       60% { transform: translateY(0); opacity: 1; }
