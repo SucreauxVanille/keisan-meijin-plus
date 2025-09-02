@@ -1,8 +1,8 @@
 // triceratops.js
 
-let streak = 0;
-let currentCreature = null;
-let currentColor = null;
+window.streak = 0;
+window.currentCreature = null;
+window.currentColor = null;
 
 // 色指定関数（従来の恐竜用）
 function colorName(choice) {
