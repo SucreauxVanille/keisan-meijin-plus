@@ -54,7 +54,7 @@ function showCreature(src, extraClass = "") {
 }
 
 // === streak進行 ===
-function handleStreakEvent() {
+function handleCreatureProgress() {
   // streak === 3 → egg1
   if (streak === 3) {
     showMessageModal(["おや？"]);
