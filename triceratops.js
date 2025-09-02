@@ -1,138 +1,167 @@
 // triceratops.js
 
-window.streak = 0;
+// グローバル変数は window に格納（重複宣言防止）
 window.currentCreature = null;
 window.currentColor = null;
 
-// 色指定関数（従来の恐竜用）
-function colorName(choice) {
-  switch (choice) {
-    case "red": return "赤い";
-    case "blue": return "青い";
-    case "green": return "緑の";
-    case "yellow": return "黄色い";
-    case "pink": return "ピンクの";
-    default: return "";
-  }
-}
+// 色リスト（トリケラ・ブラキオ用）
+const colors = ["red", "blue", "green", "yellow", "pink"];
 
-// === レオパ系 ===
-const geckoMorphs = ["highyellow", "maxsnow"]; // 2種類
-function geckoClass(morph) {
-  return morph === "maxsnow" ? "gecko-maxsnow" : "gecko-highyellow";
-}
-function geckoName(morph) {
-  return morph === "maxsnow" ? "マックスノー" : "ハイイエロー";
-}
-
-// === メッセージモーダル ===
+// MessageModal表示
 function showMessageModal(messages) {
   const modal = document.getElementById("messageModal");
-  const text = document.getElementById("modalText");
+  const modalText = document.getElementById("modalText");
 
-  let step = 0;
-  text.textContent = messages[0];
+  if (!Array.isArray(messages)) messages = [messages];
+  let index = 0;
 
+  modalText.textContent = messages[index];
   modal.style.display = "flex";
 
   modal.onclick = () => {
-    step++;
-    if (step < messages.length) {
-      text.textContent = messages[step];
+    index++;
+    if (index < messages.length) {
+      modalText.textContent = messages[index];
     } else {
       modal.style.display = "none";
-      modal.onclick = null;
     }
   };
 }
 
-// === クリーチャー表示 ===
-function showCreature(src, extraClass = "") {
-  const img = document.getElementById("dino");
-  img.src = src;
-  img.className = `creature-img ${extraClass}`;
+// MessageModalを閉じる
+function closeMessageModal() {
+  document.getElementById("messageModal").style.display = "none";
 }
 
-// === streak進行 ===
+// 中央強調アニメーション
+function centerPulse(imgElement) {
+  imgElement.classList.add("center-pulse", "front");
+  setTimeout(() => {
+    imgElement.classList.remove("center-pulse", "front");
+  }, 3000);
+}
+
+// 色名を日本語に変換
+function colorName(color) {
+  switch (color) {
+    case "red": return "あか";
+    case "blue": return "あお";
+    case "green": return "みどり";
+    case "yellow": return "きいろ";
+    case "pink": return "ピンク";
+    default: return "";
+  }
+}
+
+// トリケラトプス生成
+function spawnTriceratops() {
+  const dino = document.getElementById("dino");
+  window.currentCreature = "triceratops";
+  window.currentColor = colors[Math.floor(Math.random() * colors.length)];
+
+  dino.src = `images/${window.currentColor}_triceratops.png`;
+  dino.className = "creature-img idle-sway";
+  dino.style.filter = ""; // 色変換はCSSで適用
+
+  showMessageModal([
+    `タマゴから${colorName(window.currentColor)}トリケラトプスが生まれた！`,
+    "トリケラトプスはあなたをママだと思ってるみたい"
+  ]);
+  centerPulse(dino);
+}
+
+// ブラキオ生成
+function spawnBrachiosaurus() {
+  const dino = document.getElementById("dino");
+  window.currentCreature = "brachio";
+  window.currentColor = colors[Math.floor(Math.random() * colors.length)];
+
+  dino.src = `images/${window.currentColor}_brachio.png`;
+  dino.className = "creature-img idle-sway";
+  dino.style.filter = "";
+
+  showMessageModal([
+    "タマゴからブラキオサウルスが生まれた！",
+    "ブラキオサウルスと一緒に頑張ろう！"
+  ]);
+  centerPulse(dino);
+}
+
+// レオパードゲッコー生成
+function spawnLeopardGecko() {
+  const dino = document.getElementById("dino");
+  window.currentCreature = "gecko";
+
+  const type = Math.random() < 0.5 ? "highyellow" : "maxsnow";
+  window.currentColor = type;
+
+  dino.src = "images/yellow.png";
+  dino.className = "creature-img idle-sway";
+  dino.style.filter = type === "maxsnow" ? "saturate(0%)" : "saturate(100%)";
+
+  const nameJP = type === "maxsnow" ? "マックスノー" : "ハイイエロー";
+  showMessageModal([
+    `タマゴがかえって、レオパの${nameJP}が生まれた！`,
+    "レオパと一緒に頑張ろう！"
+  ]);
+  centerPulse(dino);
+}
+
+// 進行管理（main.jsから呼び出し）
 function handleCreatureProgress() {
-  // streak === 3 → egg1
+  const streak = window.streak;
+  const eggImage = document.getElementById("eggImage");
+
   if (streak === 3) {
-    showMessageModal(["おや？"]);
-    const egg = document.getElementById("eggImage");
-    egg.src = "egg1.png";
-    egg.className = "fall-and-bounce"; // 落下アニメーション
-    return;
+    showMessageModal("おや？");
+    eggImage.src = "images/egg1.png";
+    eggImage.className = "creature-img fall";
   }
 
-  // streak === 5 → egg2 or はじき/カエル
   if (streak === 5) {
     const rand = Math.random();
-    if (rand < 0.05) {
-      showMessageModal(["よく見たらタマゴじゃなくてはじき丸くんだった…", "はじき丸くんと一緒に頑張ろう！"]);
-      showCreature("hajiki.png", "idle-sway");
-      currentCreature = "hajiki";
-    } else if (rand < 0.10) {
-      showMessageModal(["よく見たらタマゴじゃなくてカエルだった…", "カエルと一緒に頑張ろう！"]);
-      showCreature("frog.png", "idle-sway");
-      currentCreature = "frog";
+    if (rand < 0.6) {
+      showMessageModal([
+        "タマゴが割れそう！何か生まれるかも！",
+        "正解してタマゴをかえそう！"
+      ]);
+      eggImage.src = "images/egg2.png";
+      eggImage.className = "creature-img fall";
+    } else if (rand < 0.8) {
+      showMessageModal([
+        "よく見たらタマゴじゃなくてはじき丸くんだった…",
+        "はじき丸くんと一緒に頑張ろう！"
+      ]);
+      eggImage.src = "images/hajiki.png";
+      eggImage.className = "creature-img idle-sway";
     } else {
-      showMessageModal(["タマゴが育ってるみたい！"]);
-      const egg = document.getElementById("eggImage");
-      egg.src = "egg2.png";
-      egg.className = "creature-img idle-sway";
-      currentCreature = "egg2";
+      showMessageModal([
+        "よく見たらタマゴじゃなくてカエルだった…",
+        "カエルと一緒に頑張ろう！"
+      ]);
+      eggImage.src = "images/frog.png";
+      eggImage.className = "creature-img idle-sway";
     }
-    return;
+    centerPulse(eggImage);
   }
 
-  // streak === 10 → hatch!
-  if (streak === 10 && currentCreature === "egg2") {
+  if (streak === 10) {
     const rand = Math.random();
-    if (rand < 0.40) {
-      // トリケラ
-      currentColor = ["red", "blue", "green", "yellow", "pink"][Math.floor(Math.random() * 5)];
-      showCreature(`triceratops.png`, `${currentColor} idle-sway`);
-      showMessageModal([`タマゴから${colorName(currentColor)}トリケラトプスが生まれた！`, "トリケラトプスはあなたをママだと思ってるみたい"]);
-      currentCreature = "triceratops";
-    } else if (rand < 0.70) {
-      // ブラキオ
-      currentColor = ["red", "blue", "green", "yellow", "pink"][Math.floor(Math.random() * 5)];
-      showCreature(`brachio.png`, `${currentColor} idle-sway`);
-      showMessageModal(["タマゴからブラキオサウルスが生まれた！", "ブラキオサウルスと一緒に頑張ろう！"]);
-      currentCreature = "brachio";
+    if (rand < 0.4) {
+      spawnTriceratops();
+    } else if (rand < 0.7) {
+      spawnBrachiosaurus();
     } else {
-      // レオパ
-      const morph = geckoMorphs[Math.floor(Math.random() * geckoMorphs.length)];
-      showCreature("yellow.png", `${geckoClass(morph)} idle-sway`);
-      showMessageModal([`タマゴがかえって、レオパの${geckoName(morph)}が生まれた！`, "レオパと一緒に頑張ろう！"]);
-      currentCreature = "gecko";
+      spawnLeopardGecko();
     }
-    return;
   }
 
-  // streak === 15 → トリケラ成長
-  if (streak === 15 && currentCreature === "triceratops") {
-    showCreature(`triceratops2.png`, `${currentColor} idle-sway center-pulse`);
-    showMessageModal(["おめでとう！トリケラトプスが成長したよ！"]);
+  if (streak === 15 && window.currentCreature === "triceratops") {
+    const dino = document.getElementById("dino");
+    dino.src = `images/${window.currentColor}_triceratops2.png`;
+    dino.className = "creature-img idle-sway";
+
+    showMessageModal("おめでとう！トリケラトプスが成長したよ！");
+    centerPulse(dino);
   }
-}
-
-// === 正解時処理 ===
-function onCorrectAnswer() {
-  streak++;
-  handleStreakEvent();
-
-  // streak > 10 && トリケラ表示中 → 嬉しいメッセージ
-  if (streak > 10 && currentCreature === "triceratops") {
-    showMessageModal(["ママが正解してトリケラトプスも嬉しそう！"]);
-  }
-}
-
-// === 不正解時処理 ===
-function onWrongAnswer() {
-  streak = 0;
-  currentCreature = null;
-  currentColor = null;
-  document.getElementById("eggImage").src = "";
-  document.getElementById("dino").src = "";
 }
