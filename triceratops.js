@@ -1,3 +1,6 @@
+// 既に定義済みの handleCreatureProgress をグローバルに公開
+window.handleCreatureProgress = handleCreatureProgress;
+
 // Patched triceratops.js — preserves original function names and integrates gecko + probability fixes
 // Globals (attach to window to avoid duplicate declarations)
 window.currentCreature = window.currentCreature || null;
