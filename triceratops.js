@@ -35,9 +35,9 @@ function handleCreatureProgress(streak) {
     const rand = Math.random();
     let character;
 
-    if (rand < 0.2) {
+    if (rand < 0.05) {
       character = "hajiki";
-    } else if (rand < 0.4) {
+    } else if (rand < 0.10) {
       character = "frog";
     } else {
       character = "egg2";
@@ -79,21 +79,27 @@ function handleCreatureProgress(streak) {
 
   } else if (streak === 10) {
     if (eggImage.src.includes("egg2")) {
-      const variants = ["brachio", "red", "blue", "green", "yellow", "pink"];
       const rand = Math.random();
       let choice;
 
-      if (rand < 0.3) {
-        choice = "brachio";
-      } else {
+      if (rand < 0.4) {
         const triceratopsColors = ["red", "blue", "green", "yellow", "pink"];
         choice = triceratopsColors[Math.floor(Math.random() * triceratopsColors.length)];
+      } else if (rand < 0.7) {
+        choice = "brachio";
+      } else {
+        choice = "leopa";
       }
 
       if (choice === "brachio") {
         dino.src = "brachio.png";
         showMessageModal("タマゴからブラキオサウルスが生まれた！", () => {
           showMessageModal("ブラキオサウルスと一緒に頑張ろう！");
+        });
+      } else if (choice === "leopa") {
+        dino.src = "leopa.png";
+        showMessageModal("タマゴがかえって、レオパのハイイエローが生まれた！", () => {
+          showMessageModal("レオパと一緒に頑張ろう！");
         });
       } else {
         dino.src = "triceratops.png";
